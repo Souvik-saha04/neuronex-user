@@ -1,112 +1,148 @@
-import styles from './page.module.css';
+"use client";
 
-const recentAlerts = [
-  { color: '#f39c12', label: '3 document verification pending', tag: 'Warning', tagColor: '#f39c12' },
-  { color: '#3498db', label: 'Weekly report generation completed', tag: 'Done', tagColor: '#27ae60' },
-  { color: '#f39c12', label: '2 health checkups overdue this month', tag: 'Warning', tagColor: '#f39c12' },
+import React from "react";
+// 1. Import styles as an object to use CSS Modules
+import styles from "./page.module.css";
+
+// ── Icon helpers ──
+// Define what the Icon component expects
+interface IconProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Icon = ({ children, className }: IconProps) => (
+  <span className={`${styles.icon} ${className || ""}`} aria-hidden="true">
+    {children}
+  </span>
+);
+
+// ── Data ──
+const stats = [
+  { icon: "👥", iconClass: "blue", value: "50,000+", label: "Active Users" },
+  { icon: "✅", iconClass: "green", value: "100,000+", label: "Appointments" },
+  { icon: "🛡️", iconClass: "purple", value: "100%", label: "Secure" },
 ];
 
-const quickLinks = [
-  { icon: '🚨', label: 'Emergency Contacts', sub: 'View all emergency numbers' },
-  { icon: '📞', label: '24/7 Helpline Number', sub: '1056 (Toll Free)' },
-  { icon: '🏥', label: 'Nearest Health Centre', sub: 'Use location services in app' },
+const features = [
+  {
+    icon: "📅",
+    iconClass: "blue",
+    cardClass: "blue",
+    name: "Book Appointments",
+    desc: "Schedule appointments with healthcare providers.",
+  },
+  {
+    icon: "📄",
+    iconClass: "orange",
+    cardClass: "orange",
+    name: "Health Records",
+    desc: "Access and manage medical records securely.",
+  },
+  {
+    icon: "📞",
+    iconClass: "red",
+    cardClass: "red",
+    name: "24/7 Support",
+    desc: "Round-the-clock helpline and emergency contact.",
+  },
 ];
 
-const healthStats = [
-  { value: '4', label: 'Health Records', icon: '📋', color: '#e3f2fd', accent: '#1976d2' },
-  { value: '2', label: 'Vaccinations', icon: '💉', color: '#e8f5e8', accent: '#2e7d32' },
-  { value: '1', label: 'Active Alert', icon: '⚠️', color: '#fff3cd', accent: '#856404' },
-  { value: '3', label: 'Documents', icon: '📄', color: '#f3e5f5', accent: '#7b1fa2' },
+const alerts = [
+  { icon: "🔔", text: "3 document verification pending", type: "warning" },
+  { icon: "✅", text: "Weekly report generation completed", type: "done" },
+  { icon: "🕐", text: "2 health checkups overdue this month", type: "warning" },
 ];
 
-export default function UserHomePage() {
+// ── Component ──
+export default function MedAxis() {
   return (
-    <div className={styles.page}>
-      {/* Header */}
-      <div className={styles.topBar}>
-        <div>
-          <h2 className={styles.greeting}>Welcome back, Rajesh 👋</h2>
-          <p className={styles.subGreeting}>Access your health records and stay informed</p>
-        </div>
-        <div className={styles.topBarRight}>
-          <div className={styles.locationBadge}>
-            <span>📍</span>
-            <span>Kollam, Kerala, India</span>
-          </div>
-        </div>
-      </div>
+    // 2. Use styles['class-name'] for all classes
+    <div className={styles["medaxis-wrapper"]}>
 
-      {/* Welcome Hero */}
-      <div className={styles.heroCard}>
-        <div className={styles.heroLeft}>
-          <div className={styles.heroIconBig}>➕</div>
-          <div>
-            <h3 className={styles.heroTitle}>Welcome to MedAxis</h3>
-            <p className={styles.heroDesc}>
-              Access comprehensive healthcare services, manage your health records, and stay connected
-              with Kerala&apos;s digital health infrastructure.
-            </p>
-            <a href="/user/health-records" className={styles.heroBtn}>Access Health System</a>
-          </div>
+      {/* ── Hero ── */}
+      <section className={styles["hero-section"]}>
+        <div className={styles["hero-left"]}>
+          <h1 className={styles["hero-title"]}>Welcome to MedAxis</h1>
+          <p className={styles["hero-subtitle"]}>
+            Easily book appointments with top doctors, manage your health
+            records, and stay connected with Kerala's digital health
+            infrastructure.
+          </p>
+          <button className={styles["btn-primary"]}>Access Health System</button>
         </div>
-      </div>
 
-      {/* Stats Row */}
-      <div className={styles.statsRow}>
-        {healthStats.map((s) => (
-          <div key={s.label} className={styles.statCard} style={{ background: s.color }}>
-            <div className={styles.statIcon}>{s.icon}</div>
-            <div className={styles.statValue} style={{ color: s.accent }}>{s.value}</div>
-            <div className={styles.statLabel}>{s.label}</div>
+        {/* Quick Stats Card */}
+        <div className={styles["quick-stats-card"]}>
+          <div className={styles["quick-stats-title"]}>Quick Stats</div>
+          {stats.map((s) => (
+            <div className={styles["stat-item"]} key={s.label}>
+              {/* Mapping dynamic classes like 'blue', 'green', 'purple' */}
+              <div className={`${styles["stat-icon"]} ${styles[s.iconClass]}`}>{s.icon}</div>
+              <div className={styles["stat-info"]}>
+                <div className={styles["stat-value"]}>{s.value}</div>
+                <div className={styles["stat-label"]}>{s.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Features ── */}
+      <section className={styles["features-section"]}>
+        <h2 className={styles["features-title"]}>Our Features</h2>
+        <div className={styles["features-grid"]}>
+          {features.map((f) => (
+            <div className={`${styles["feature-card"]} ${styles[f.cardClass]}`} key={f.name}>
+              <div className={`${styles["feature-icon-wrap"]} ${styles[f.iconClass]}`}>{f.icon}</div>
+              <div className={styles["feature-name"]}>{f.name}</div>
+              <div className={styles["feature-desc"]}>{f.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Alerts ── */}
+      <section className={styles["alerts-section"]}>
+        <h3 className={styles["alerts-title"]}>Recent Alerts</h3>
+        {alerts.map((a, i) => (
+          <div className={`${styles["alert-item"]} ${styles[a.type]}`} key={i}>
+            <div className={styles["alert-left"]}>
+              <span className={styles["alert-icon"]}>{a.icon}</span>
+              {a.text}
+            </div>
+            <span className={`${styles["alert-badge"]} ${styles[a.type]}`}>
+              {a.type === "done" ? "Done" : "Warning"}
+            </span>
           </div>
         ))}
-      </div>
+      </section>
 
-      <div className={styles.twoCol}>
-        {/* Recent Alerts */}
-        <div className={styles.card}>
-          <h3 className={styles.cardTitle}>Recent alerts</h3>
-          <div className={styles.alertList}>
-            {recentAlerts.map((a, i) => (
-              <div key={i} className={styles.alertItem}>
-                <span className={styles.alertDot} style={{ background: a.color }} />
-                <span className={styles.alertText}>{a.label}</span>
-                <span className={styles.alertTag} style={{ background: a.tagColor + '22', color: a.tagColor }}>
-                  {a.tag}
-                </span>
-              </div>
-            ))}
+      {/* ── Emergency Contacts ── */}
+      <section className={styles["emergency-section"]}>
+        <div className={styles["emergency-header"]}>
+          <span>🔔</span>
+          <span>Emergency Contacts</span>
+        </div>
+        <div className={styles["emergency-grid"]}>
+          <div className={styles["emergency-card"]}>
+            <div className={styles["emergency-card-label"]}>
+              <span>📞</span> 24/7 Helpline
+            </div>
+            <div className={styles["emergency-card-value"]}>1800-XXX-XXXX</div>
+          </div>
+          <div className={styles["emergency-card"]}>
+            <div className={styles["emergency-card-label"]}>
+              <span>📍</span> Nearest Centre
+            </div>
+            <div className={styles["emergency-card-value"]}>Use location services</div>
           </div>
         </div>
+      </section>
 
-        {/* Quick Links */}
-        <div className={styles.card}>
-          <h3 className={styles.cardTitle}>Quick Access</h3>
-          <div className={styles.quickLinks}>
-            {quickLinks.map((q, i) => (
-              <div key={i} className={styles.quickItem}>
-                <span className={styles.quickIcon}>{q.icon}</span>
-                <div>
-                  <p className={styles.quickLabel}>{q.label}</p>
-                  <p className={styles.quickSub}>{q.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* ── Help FAB ── */}
+      <button className={styles["help-fab"]} aria-label="Help">?</button>
 
-      {/* Active Outbreak Banner */}
-      <div className={styles.outbreakBanner}>
-        <div className={styles.outbreakLeft}>
-          <span className={styles.outbreakIcon}>⚠️</span>
-          <div>
-            <p className={styles.outbreakTitle}>Active Disease Outbreak – COVID-19</p>
-            <p className={styles.outbreakSub}>520 confirmed cases in your region. Stay alert and follow safety guidelines.</p>
-          </div>
-        </div>
-        <a href="/user/ai-alerts" className={styles.outbreakBtn}>View AI Alerts →</a>
-      </div>
     </div>
   );
 }
