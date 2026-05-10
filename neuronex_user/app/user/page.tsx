@@ -129,19 +129,18 @@ export default function MedAxis() {
             <div className={styles["emergency-card-label"]}>
               <span>📞</span> 24/7 Helpline
             </div>
-            <div className={styles["emergency-card-value"]}>1800-XXX-XXXX</div>
+            <div className={styles["emergency-card-value"]}>+91 90077 34643</div>
           </div>
           <div className={styles["emergency-card"]}>
             <div className={styles["emergency-card-label"]}>
               <span>📍</span> Nearest Centre
             </div>
-            <div className={styles["emergency-card-value"]}>Use location services</div>
+            <div className={styles["emergency-card-value"]}>Use STAR PG</div>
           </div>
         </div>
       </section>
 
-      {/* ── Help FAB ── */}
-      <button className={styles["help-fab"]} aria-label="Help">?</button>
+
 
     </div>
   );

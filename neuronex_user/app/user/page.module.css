@@ -19,9 +19,9 @@
     --orange-light: #fff7ed;
     --green: #16a34a;
     --green-light: #dcfce7;
-    --alert-warn-bg: #fff7ed;
+    --alert-warn-bg: #fdddb6;
     --alert-warn-border: #f97316;
-    --alert-done-bg: #eff6ff;
+    --alert-done-bg: #c1dcff;
     --alert-done-border: #2563eb;
     --white: #ffffff;
     --gray-100: #f3f4f6;
@@ -272,10 +272,11 @@
 }
 
 .alerts-title {
-    font-size: 1.1rem;
+    text-align: center;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--gray-800);
-    margin-bottom: 14px;
+    margin-bottom: 24px;
 }
 
 .alert-item {
@@ -287,6 +288,8 @@
     margin-bottom: 10px;
     border-left: 4px solid transparent;
     gap: 12px;
+    transition: transform 0.3s ease;
+
 }
 
 .alert-item.warning {
@@ -297,6 +300,12 @@
 .alert-item.done {
     background: var(--alert-done-bg);
     border-color: var(--alert-done-border);
+}
+
+.alert-item:hover {
+    cursor: pointer;
+    opacity: 0.8;
+    transform: scale(1.01);
 }
 
 .alert-left {
@@ -335,7 +344,7 @@
 .emergency-section {
     background: var(--red);
     padding: 22px 40px;
-    border-radius: 0;
+    border-radius: 3px;
 }
 
 .emergency-header {
@@ -343,7 +352,7 @@
     align-items: center;
     gap: 10px;
     color: white;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 16px;
 }
@@ -361,13 +370,18 @@
 }
 
 .emergency-card {
-    background: rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.181);
     border-radius: var(--radius-sm);
     padding: 14px 18px;
     color: white;
     display: flex;
     flex-direction: column;
     gap: 4px;
+    transition: transform 0.3s ease;
+}
+
+.emergency-card:hover {
+    transform: scale(1.03);
 }
 
 .emergency-card-label {
@@ -382,30 +396,4 @@
 .emergency-card-value {
     font-size: 1rem;
     font-weight: 700;
-}
-
-/* ── HELP BUTTON ── */
-.help-fab {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    width: 46px;
-    height: 46px;
-    background: var(--navy);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    font-weight: 700;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
-    cursor: pointer;
-    border: none;
-    transition: background 0.18s;
-    z-index: 100;
-}
-
-.help-fab:hover {
-    background: var(--navy-light);
 }
