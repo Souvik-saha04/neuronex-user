@@ -198,7 +198,7 @@ export default function App() {
                 <div className={styles["right-col"]}>
 
                     {/* Travel Advisory */}
-                    <div className={`${styles.card} ${styles["travel-card"]}`}>
+                    {/* <div className={`${styles.card} ${styles["travel-card"]}`}>
                         <div className={styles["travel-title"]}>
                             <IconNavigation /> District Travel Advisory
                         </div>
@@ -210,7 +210,7 @@ export default function App() {
                                 <span className={`${styles.badge} ${styles[d.badge]}`}>{d.label}</span>
                             </div>
                         ))}
-                    </div>
+                    </div> */}
 
                     {/* Report Symptoms */}
                     <div className={styles["report-card"]}>
