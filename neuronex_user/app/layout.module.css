@@ -332,6 +332,71 @@
   text-decoration: underline;
 }
 
+.scrollableModal {
+  max-height: 85vh;
+  /* Prevents modal from going off-screen */
+  overflow-y: auto;
+  /* Adds a scrollbar inside the modal if needed */
+  padding-top: 40px;
+}
+
+.formMainTitle {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #1a1f36;
+}
+
+.formSectionBox {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formSectionBox h3 {
+  font-size: 1rem;
+  color: #1e293b;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 5px;
+}
+
+.registrationForm label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.registrationForm input,
+.registrationForm select {
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #f8fafc;
+}
+
+.radioGroup {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+/* Customizing the internal scrollbar for a cleaner look */
+.scrollableModal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollableModal::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
 /* Re-using the overlay from login for consistency */
 .modalOverlay {
   position: fixed;
