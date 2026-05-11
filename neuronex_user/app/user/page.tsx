@@ -50,7 +50,7 @@ const features = [
 ];
 
 const alerts = [
-  // { icon: "🔔", text: "3 document verification pending", type: "warning" },
+  { icon: "🔔", text: "3 document verification pending", type: "warning" },
   { icon: "✅", text: "Weekly report generation completed", type: "done" },
   { icon: "🕐", text: "2 health checkups overdue this month", type: "warning" },
 ];
@@ -122,7 +122,7 @@ export default function MedAxis() {
       {/* ── Emergency Contacts ── */}
       <section className={styles["emergency-section"]}>
         <div className={styles["emergency-header"]}>
-          <span>🔔</span>
+          {/* <span>🔔</span> */}
           <span>Emergency Contacts</span>
         </div>
         <div className={styles["emergency-grid"]}>

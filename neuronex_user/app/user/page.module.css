@@ -350,10 +350,10 @@
 .emergency-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 10px;
     color: white;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 16px;
 }
@@ -383,6 +383,7 @@
 
 .emergency-card:hover {
     transform: scale(1.03);
+    cursor: pointer;
 }
 
 .emergency-card-label {

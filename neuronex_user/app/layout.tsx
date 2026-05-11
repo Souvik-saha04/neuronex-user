@@ -20,8 +20,7 @@ import styles from './layout.module.css';
 const navItems = [
   { href: '/user', icon: '🏠', label: 'Home' },
   { href: '/user/health_records', icon: '📄', label: 'Health Records' },
-  { href: '/user/upload_prescription', icon: '📤', label: 'Upload Prescription' },
-  { href: '/user/ai_alerts', icon: '🧠', label: 'AI Health Alerts' },
+  { href: '/user/ai_alert', icon: '🧠', label: 'AI Health Alerts' },
   { href: '/user/nearby_help', icon: '📍', label: 'Nearby Help' },
 ];
 
