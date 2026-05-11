@@ -4,6 +4,7 @@ import React from "react";
 // 1. Import styles as an object to use CSS Modules
 import styles from "./page.module.css";
 
+
 // ── Icon helpers ──
 // Define what the Icon component expects
 interface IconProps {
@@ -49,7 +50,7 @@ const features = [
 ];
 
 const alerts = [
-  { icon: "🔔", text: "3 document verification pending", type: "warning" },
+  // { icon: "🔔", text: "3 document verification pending", type: "warning" },
   { icon: "✅", text: "Weekly report generation completed", type: "done" },
   { icon: "🕐", text: "2 health checkups overdue this month", type: "warning" },
 ];

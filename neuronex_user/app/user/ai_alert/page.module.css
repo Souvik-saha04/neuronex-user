@@ -1,0 +1,621 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:global(*) {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:global(body) {
+    background-color: #f3f4f6;
+}
+
+
+/* ── HEADER ── */
+.header {
+    background: linear-gradient(135deg, #151519 5%, #031159 97%);
+
+    text-align: center;
+    padding: 40px 20px 36px;
+}
+
+.header h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+}
+
+.header p {
+    margin-top: 8px;
+    font-size: 1rem;
+    color: #c5cae9;
+    font-weight: 400;
+}
+
+/* ── MAIN LAYOUT ── */
+.main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* ── CARD BASE ── */
+.card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+/* ── THREAT LEVEL CARD ── */
+.threat-card {
+    border-left: 5px solid #e53935;
+}
+
+.card-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #555;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.card-label svg {
+    color: #e53935;
+}
+
+.threat-bar-bg {
+    background: #e0e0e0;
+    border-radius: 999px;
+    height: 12px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.threat-bar-fill {
+    height: 100%;
+    width: 82%;
+    background: linear-gradient(90deg, #ff9800 0%, #f44336 100%);
+    border-radius: 999px;
+}
+
+.threat-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.threat-status-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #e53935;
+}
+
+.dot-red {
+    width: 12px;
+    height: 12px;
+    background: #e53935;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-orange {
+    width: 12px;
+    height: 12px;
+    background: #fb8c00;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-green {
+    width: 12px;
+    height: 12px;
+    background: #43a047;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.threat-percent {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #444;
+}
+
+/* ── OUTBREAK INFO CARD ── */
+.outbreak-card {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 14px;
+}
+
+.section-title svg {
+    color: #43a047;
+}
+
+.outbreak-name {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #e53935;
+    margin-bottom: 18px;
+    line-height: 1;
+}
+
+.stats-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 22px;
+}
+
+.stat-item {
+    flex: 1;
+    text-align: left;
+}
+
+.stat-value {
+    font-size: 1.65rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.stat-value.red {
+    color: #e53935;
+}
+
+.stat-value.orange {
+    color: #fb8c00;
+}
+
+.stat-value.green {
+    color: #43a047;
+}
+
+.stat-value.blue {
+    color: #1976d2;
+}
+
+.stat-label {
+    font-size: 0.78rem;
+    color: #777;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+.info-row {
+    font-size: 0.92rem;
+    color: #333;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.info-row strong {
+    font-weight: 700;
+}
+
+/* ── SAFETY GUIDELINES CARD ── */
+.safety-card {
+    grid-column: 1;
+}
+
+.safety-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.dos-box {
+    background: #f1fdf4;
+    border: 1.5px solid #c8e6c9;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.donts-box {
+    background: #fff5f5;
+    border: 1.5px solid #ffcdd2;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.box-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.box-title.dos-title {
+    color: #2e7d32;
+}
+
+.box-title.donts-title {
+    color: #c62828;
+}
+
+.guideline-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.guideline-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+.guideline-list li .dot-green {
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.guideline-list li .dot-red {
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+/* ── RIGHT COLUMN ── */
+.right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ── TRAVEL ADVISORY ── */
+/* .travel-card {} */
+
+.travel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 18px;
+}
+
+.travel-title svg {
+    color: #1565c0;
+}
+
+.district-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.district-row:last-child {
+    border-bottom: none;
+}
+
+.district-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.97rem;
+    font-weight: 500;
+    color: #222;
+}
+
+.badge {
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: 1.5px solid;
+}
+
+.badge.avoid {
+    color: #c62828;
+    background: #ffeaea;
+    border-color: #ffcdd2;
+}
+
+.badge.caution {
+    color: #e65100;
+    background: #fff8ee;
+    border-color: #ffe0b2;
+}
+
+.badge.low {
+    color: #2e7d32;
+    background: #f1fdf4;
+    border-color: #c8e6c9;
+}
+
+/* ── REPORT SYMPTOMS ── */
+.report-card {
+    background: #fefae8;
+    border: 1.5px solid #f0e68c;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.report-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 18px;
+}
+
+.report-title svg {
+    color: #e65100;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    background: #fff;
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    border-color: #fb8c00;
+}
+
+.form-textarea {
+    height: 110px;
+    resize: vertical;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: #e53935;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.submit-btn:hover {
+    background: #c62828;
+}
+
+/* ── VACCINATION DRIVE ── */
+.vaccine-card {
+    background: #1565c0;
+    border-radius: 16px;
+    padding: 24px;
+    color: #fff;
+}
+
+.vaccine-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.vaccine-subtitle {
+    font-size: 0.92rem;
+    color: #bbdefb;
+    margin-bottom: 16px;
+}
+
+.vaccine-bar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.vaccine-bar-label {
+    font-size: 0.88rem;
+    color: #e3f2fd;
+}
+
+.vaccine-bar-pct {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.vaccine-bar-bg {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.vaccine-bar-fill {
+    height: 100%;
+    width: 63%;
+    background: #69f0ae;
+    border-radius: 999px;
+}
+
+/* ── EMERGENCY HOTLINE ── */
+.hotline-card {
+    background: #0d1b4b;
+    border-radius: 16px;
+    padding: 24px 28px;
+    color: #fff;
+    text-align: center;
+}
+
+.hotline-label {
+    font-size: 0.8rem;
+    color: #9fa8da;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.hotline-number {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.hotline-sub {
+    font-size: 0.85rem;
+    color: #9fa8da;
+    margin-bottom: 18px;
+}
+
+.call-btn {
+    width: 100%;
+    padding: 15px;
+    background: #e53935;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.call-btn:hover {
+    background: #c62828;
+}
+
+/* ── HEALTH PROTOCOLS ── */
+.protocols-section {
+    max-width: 1400px;
+    margin: 0 auto 32px;
+    padding: 0 24px;
+}
+
+.protocols-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.protocols-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+}
+
+.protocol-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: flex-start;
+}
+
+.protocol-item:last-child {
+    border-bottom: none;
+}
+
+.protocol-bar {
+    width: 4px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    align-self: stretch;
+    min-height: 60px;
+}
+
+.protocol-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+}
+
+.protocol-body h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 5px;
+}
+
+.protocol-body p {
+    font-size: 0.88rem;
+    color: #555;
+    line-height: 1.55;
+}
+
+/* ── EMERGENCY HOTLINE full-width section above protocols ── */
+.bottom-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .safety-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+}

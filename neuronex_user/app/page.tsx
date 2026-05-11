@@ -1,5 +1,6 @@
 "use client";
-
+// import Link from 'next/link';
+// import { usePathname } from 'next/navigation';
 import React from "react";
 // 1. Import styles as an object to use CSS Modules
 import styles from "./landing_page.module.css";
@@ -55,6 +56,8 @@ const alerts = [
 ];
 
 // ── Component ──
+
+
 export default function MedAxis() {
   return (
     // 2. Use styles['class-name'] for all classes

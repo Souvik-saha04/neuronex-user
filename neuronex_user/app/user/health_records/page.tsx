@@ -1,9 +1,9 @@
-"use client"; // <--- Add this at the very top
+"use client";
 
 import React, { useState } from "react";
-import styles from "./page.module.css"; // <--- Import 'styles' object
+import styles from "./page.module.css";
 
-// ── SVG Icons ──────────────────────────────────────────────────────────────
+// ── SVG Icons ──
 const SearchIcon = () => (
     <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
@@ -96,6 +96,11 @@ export default function HealthRecords() {
                     <p>Rajesh Kumar - WK001</p>
                 </div>
 
+                <button className={styles["header-upload-btn"]}>
+                    <UploadIcon />
+                    <span>New Document</span>
+                </button>
+
             </header>
 
             {/* ── Search ── */}
@@ -111,11 +116,6 @@ export default function HealthRecords() {
                 </div>
 
                 <div className={styles["hr-filter-row"]}>
-
-                    <button className={styles["hr-upload-btn"]} aria-label="Upload">
-                        <UploadIcon />
-                    </button>
-
                     <button className={styles["hr-filter-btn"]} aria-label="filter">
                         <FilterIcon />
                     </button>
@@ -127,7 +127,7 @@ export default function HealthRecords() {
 
             {/* ── Meta Bar ── */}
             <div className={styles["hr-meta-bar"]}>
-                <span className={styles["hr-count"]}>{filtered.length * 3} documents found</span>
+                <span className={styles["hr-count"]}>{filtered.length} documents found</span>
                 <button className={styles["hr-filtered-btn"]}>
                     <FilterIcon /> Filtered
                 </button>
