@@ -122,10 +122,27 @@ export default function HealthRecords() {
     const [search, setSearch] = useState("");
     const [sort, setSort] = useState("date");
     const [activeTab, setActiveTab] = useState("Personal");
+    const [searchQuery, setSearchQuery] = useState("");
 
-    const filtered = DOCUMENTS.filter((d) =>
-        d.name.toLowerCase().includes(search.toLowerCase())
+    // 1. Filter Personal Docs
+    const filteredPersonalDocs = DOCUMENTS.filter(doc =>
+        doc.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    // 2. Filter Family Members and their nested docs
+    const filteredFamily = FAMILYDOCS.map(member => ({
+        ...member,
+        docs: member.docs.filter(doc =>
+            doc.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    })).filter(member =>
+        member.docs.length > 0 || member.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // 3. Update the Count Logic
+    const totalDocsCount = activeTab === "Personal"
+        ? filteredPersonalDocs.length
+        : filteredFamily.reduce((acc, m) => acc + m.docs.length, 0);
 
     return (
         <div className={styles["hr-page"]}>
@@ -134,14 +151,13 @@ export default function HealthRecords() {
             <header className={styles["hr-header"]}>
                 <div className={styles["hr-header-left"]}>
                     <h1>My Health Records</h1>
-                    <p>Rajesh Kumar - WK001</p>
+                    <p>Rajesh Kumar - MW001</p>
                 </div>
 
                 <button className={styles["header-upload-btn"]}>
                     <UploadIcon />
                     <span>New Document</span>
                 </button>
-
             </header>
 
             {/* ── Search ── */}
@@ -151,8 +167,8 @@ export default function HealthRecords() {
                     <input
                         type="text"
                         placeholder="Search documents..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
 
@@ -161,14 +177,13 @@ export default function HealthRecords() {
                         <FilterIcon />
                     </button>
                 </div>
-
             </div>
-
-
 
             {/* ── Meta Bar ── */}
             <div className={styles["hr-meta-bar"]}>
-                <span className={styles["hr-count"]}>{filtered.length} documents found</span>
+                <span className={styles["hr-count"]}>
+                    {totalDocsCount} {totalDocsCount === 1 ? "document" : "documents"} found
+                </span>
                 <button className={styles["hr-filtered-btn"]}>
                     <FilterIcon /> Filtered
                 </button>
@@ -194,7 +209,7 @@ export default function HealthRecords() {
             <div className={styles["hr-body"]}>
                 <div className={styles["hr-patient-card"]}>
 
-                    {/* Patient Info */}
+                    {/* Patient Info Header (Stays constant) */}
                     <div className={styles["hr-patient-info"]}>
                         <div className={styles["hr-patient-top"]}>
                             <div>
@@ -203,11 +218,6 @@ export default function HealthRecords() {
                                     <span className={styles["hr-verified-badge"]}>Verified</span>
                                 </div>
                                 <div className={styles["hr-patient-id"]}>MW001</div>
-                            </div>
-                            <div className={styles["hr-patient-actions"]}>
-                                {/* <button className={styles["hr-icon-btn"]} aria-label="Expand">
-                                    <ChevronDown />
-                                </button> */}
                             </div>
                         </div>
 
@@ -220,73 +230,40 @@ export default function HealthRecords() {
                         </div>
                     </div>
 
-                    {/* Document List */}
-                    {/* <div className={styles["hr-doc-list"]}>
-                        {filtered.map((doc) => (
-                            <div className={styles["hr-doc-item"]} key={doc.id}>
-                                <div className={styles["hr-doc-left"]}>
-                                    <div className={styles["hr-doc-icon"]}><DocIcon /></div>
-                                    <div>
-                                        <div className={styles["hr-doc-name"]}>{doc.name}</div>
-                                        <div className={styles["hr-doc-meta"]}>
-                                            {doc.date} &bull; {doc.size} &bull; {doc.type}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={styles["hr-doc-actions"]}>
-                                    <button className={styles["hr-icon-btn"]} aria-label="View">
-                                        <EyeIcon />
-                                    </button>
-                                    <button className={styles["hr-icon-btn"]} aria-label="Download">
-                                        <DownloadIcon />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div> */}
-
                     {/* ── Document List Container ── */}
                     <div className={styles["hr-doc-list"]}>
-
-                        {/* ── CONDITIONAL RENDERING Logic ── */}
-                        <div className={styles["hr-list-container"]}>
-                            {activeTab === "Personal" ? (
-                                // 1. PERSONAL VIEW: Map through the flat list of files
-                                DOCUMENTS.map((doc) => (
-                                    <div className={styles["hr-doc-item"]} key={doc.id}>
-                                        <div className={styles["hr-doc-left"]}>
-                                            <div className={styles["hr-doc-icon"]}><DocIcon /></div>
-                                            <div>
-                                                <div className={styles["hr-doc-name"]}>{doc.name}</div>
-                                                <div className={styles["hr-doc-meta"]}>
-                                                    {doc.date} &bull; {doc.size} &bull; PDF
-                                                </div>
+                        {activeTab === "Personal" ? (
+                            // Render Personal View using the SEARCH FILTERED docs
+                            filteredPersonalDocs.map((doc) => (
+                                <div className={styles["hr-doc-item"]} key={doc.id}>
+                                    <div className={styles["hr-doc-left"]}>
+                                        <div className={styles["hr-doc-icon"]}><DocIcon /></div>
+                                        <div>
+                                            <div className={styles["hr-doc-name"]}>{doc.name}</div>
+                                            <div className={styles["hr-doc-meta"]}>
+                                                {doc.date} &bull; {doc.size} &bull; PDF
                                             </div>
                                         </div>
-                                        {/* ... action buttons ... */}
-                                        <div className={styles["hr-doc-actions"]}>
-                                            <button className={styles["hr-icon-btn"]} aria-label="View">
-                                                <EyeIcon />
-                                            </button>
-                                            <button className={styles["hr-icon-btn"]} aria-label="Download">
-                                                <DownloadIcon />
-                                            </button>
-                                        </div>
                                     </div>
-                                ))
-                            ) : (
-                                // 2. FAMILY VIEW: Map through the list of PEOPLE
-                                FAMILYDOCS.map((member) => (
-                                    <FamilyMemberCard key={member.id} member={member} styles={styles} />
-                                ))
-                            )}
-                        </div>
+                                    <div className={styles["hr-doc-actions"]}>
+                                        <button className={styles["hr-icon-btn"]} aria-label="View">
+                                            <EyeIcon />
+                                        </button>
+                                        <button className={styles["hr-icon-btn"]} aria-label="Download">
+                                            <DownloadIcon />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            // Render Family View using the SEARCH FILTERED members
+                            filteredFamily.map((member) => (
+                                <FamilyMemberCard key={member.id} member={member} styles={styles} />
+                            ))
+                        )}
                     </div>
-
-
                 </div>
             </div>
-
         </div>
     );
 }
@@ -311,7 +288,7 @@ function FamilyMemberCard({ member, styles }: { member: FamilyMember; styles: an
                 <div className={styles["hr-doc-left"]}>
                     <div>
                         <div className={styles["hr-doc-name"]}>
-                            {member.name} <span style={{ fontSize: '0.7rem', background: '#e0f2fes', color: '#0369a1', padding: '2px 8px', borderRadius: '10px', marginLeft: '8px' }}>{member.role}</span>
+                            {member.name} <span style={{ fontSize: '0.7rem', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '10px', marginLeft: '8px' }}>{member.role}</span>
                         </div>
                         <div className={styles["hr-doc-meta"]}>
                             {member.idCode} • {member.location}
