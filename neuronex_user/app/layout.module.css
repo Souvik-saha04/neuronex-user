@@ -205,6 +205,19 @@
   margin-top: 8px;
 }
 
+.logo-text-wrapper {
+  padding-left: 35px;
+  /* Adjust this number to push the text right */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.logoIcon {
+  padding-left: 20px;
+  padding-right: 10px;
+}
+
 /* The dark, blurred background */
 .modalOverlay {
   position: fixed;

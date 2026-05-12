@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import styles from './layout.module.css';
+import NextImage from 'next/image';
 
 const navItems = [
   { href: '/user', icon: '🏠', label: 'Home' },
@@ -73,11 +74,19 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             <aside className={styles.sidebar}>
               <div className={styles.logo}>
                 <div className={styles.logoIcon}>
-                  <span>➕</span>
+                  <div className={styles.logoIcon}>
+                    <NextImage
+                      src="/logo.png"
+                      alt="Medaxis Logo"
+                      width={155}
+                      height={140}
+                      priority
+                    />
+                  </div>
                 </div>
                 <div>
-                  <h1>MedAxis</h1>
-                  <p>Digital Health Records</p>
+                  <h1 className={styles["logo-text-wrapper"]}>MedAxis</h1>
+                  <p className={styles["logo-text-wrapper"]}>Digital Health Records</p>
                 </div>
               </div>
 
