@@ -244,6 +244,54 @@
     background: var(--bg);
 }
 
+.hr-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+
+}
+
+/* Base styles for both buttons */
+.hr-personal-btn,
+.hr-family-btn {
+    width: 390px;
+    padding: 8px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1.5px solid #1a1f36;
+    /* Navy border */
+}
+
+/* Matches your "Login" button style (Active) */
+.selected {
+
+    background-color: transparent;
+    color: #1a1f36;
+}
+
+/* Matches your "Create Account" button style (Inactive) */
+.unselected {
+    background-color: #1a1f36;
+    color: white;
+}
+
+/* Hover effects */
+.hr-personal-btn:hover,
+.hr-family-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(26, 31, 54, 0.15);
+}
+
+.hr-personal-btn:active,
+.hr-family-btn:active {
+    transform: scale(0.97);
+}
+
 /* ── PATIENT CARD ── */
 .hr-body {
     padding: 24px 32px 32px;

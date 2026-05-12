@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+
 import styles from "./page.module.css";
 
 // ── SVG Icons ──
@@ -77,10 +78,50 @@ const DOCUMENTS = [
     { id: 4, name: "Arthritis Diagnosis Report", date: "01/10/2022", size: "2.1 MB", type: "PDF" },
 ];
 
+const FAMILYDOCS = [
+    {
+        id: "mother",
+        name: "Sunita Kumar", // Example name
+        role: "Mother",
+        idCode: "MW001-M",
+        location: "Kolkata",
+        phone: "+91 9584654422",
+        docs: [
+            { id: 101, name: "Mother's Cardiac Checkup", date: "04/12/2026", size: "3.2 MB" },
+            { id: 102, name: "Mother's Pancreatic Checkup", date: "05/05/2026", size: "3.2 MB" },
+        ]
+    },
+    {
+        id: "father",
+        name: "Ramesh Kumar", // Example name
+        role: "Father",
+        idCode: "MW001-F",
+        location: "Kolkata",
+        phone: "+91 9584654422",
+        docs: [
+            { id: 201, name: "Father's Diabetes Report", date: "11/20/2025", size: "4.5 MB" },
+            { id: 202, name: "Father's General Checkup", date: "09/10/2026", size: "3.2 MB" },
+        ]
+    },
+    {
+        id: "daughter",
+        name: "Souviksha Kumar",
+        role: "Daughter",
+        idCode: "MW001-D",
+        location: "Kolkata",
+        phone: "+91 8956423669",
+        docs: [
+            { id: 301, name: "Daughter's General Checkup Report", date: "11/20/2025", size: "2.9 MB" },
+            { id: 302, name: "Daughter's Pneumonia Report", date: "11/20/2025", size: "3.5 MB" },
+        ]
+    }
+];
+
 // ── Component ─────────────────────────────────────────────────────────────
 export default function HealthRecords() {
     const [search, setSearch] = useState("");
     const [sort, setSort] = useState("date");
+    const [activeTab, setActiveTab] = useState("Personal");
 
     const filtered = DOCUMENTS.filter((d) =>
         d.name.toLowerCase().includes(search.toLowerCase())
@@ -133,6 +174,22 @@ export default function HealthRecords() {
                 </button>
             </div>
 
+            {/* ── buttons ── */}
+            <div className={styles["hr-buttons"]}>
+                <button
+                    className={`${styles["hr-personal-btn"]} ${activeTab === "Personal" ? styles.selected : styles.unselected}`}
+                    onClick={() => setActiveTab("Personal")}
+                >
+                    Personal
+                </button>
+                <button
+                    className={`${styles["hr-family-btn"]} ${activeTab === "Family" ? styles.selected : styles.unselected}`}
+                    onClick={() => setActiveTab("Family")}
+                >
+                    Family
+                </button>
+            </div>
+
             {/* ── Body ── */}
             <div className={styles["hr-body"]}>
                 <div className={styles["hr-patient-card"]}>
@@ -145,15 +202,12 @@ export default function HealthRecords() {
                                     <span className={styles["hr-patient-name"]}>Rajesh Kumar</span>
                                     <span className={styles["hr-verified-badge"]}>Verified</span>
                                 </div>
-                                <div className={styles["hr-patient-id"]}>WK001</div>
+                                <div className={styles["hr-patient-id"]}>MW001</div>
                             </div>
                             <div className={styles["hr-patient-actions"]}>
-                                <button className={styles["hr-icon-btn"]} aria-label="Copy">
-                                    <CopyIcon />
-                                </button>
-                                <button className={styles["hr-icon-btn"]} aria-label="Expand">
+                                {/* <button className={styles["hr-icon-btn"]} aria-label="Expand">
                                     <ChevronDown />
-                                </button>
+                                </button> */}
                             </div>
                         </div>
 
@@ -167,7 +221,7 @@ export default function HealthRecords() {
                     </div>
 
                     {/* Document List */}
-                    <div className={styles["hr-doc-list"]}>
+                    {/* <div className={styles["hr-doc-list"]}>
                         {filtered.map((doc) => (
                             <div className={styles["hr-doc-item"]} key={doc.id}>
                                 <div className={styles["hr-doc-left"]}>
@@ -189,11 +243,112 @@ export default function HealthRecords() {
                                 </div>
                             </div>
                         ))}
+                    </div> */}
+
+                    {/* ── Document List Container ── */}
+                    <div className={styles["hr-doc-list"]}>
+
+                        {/* ── CONDITIONAL RENDERING Logic ── */}
+                        <div className={styles["hr-list-container"]}>
+                            {activeTab === "Personal" ? (
+                                // 1. PERSONAL VIEW: Map through the flat list of files
+                                DOCUMENTS.map((doc) => (
+                                    <div className={styles["hr-doc-item"]} key={doc.id}>
+                                        <div className={styles["hr-doc-left"]}>
+                                            <div className={styles["hr-doc-icon"]}><DocIcon /></div>
+                                            <div>
+                                                <div className={styles["hr-doc-name"]}>{doc.name}</div>
+                                                <div className={styles["hr-doc-meta"]}>
+                                                    {doc.date} &bull; {doc.size} &bull; PDF
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/* ... action buttons ... */}
+                                        <div className={styles["hr-doc-actions"]}>
+                                            <button className={styles["hr-icon-btn"]} aria-label="View">
+                                                <EyeIcon />
+                                            </button>
+                                            <button className={styles["hr-icon-btn"]} aria-label="Download">
+                                                <DownloadIcon />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                // 2. FAMILY VIEW: Map through the list of PEOPLE
+                                FAMILYDOCS.map((member) => (
+                                    <FamilyMemberCard key={member.id} member={member} styles={styles} />
+                                ))
+                            )}
+                        </div>
                     </div>
+
 
                 </div>
             </div>
 
+        </div>
+    );
+}
+
+interface FamilyMember {
+    id: string;
+    name: string;
+    role: string;
+    idCode: string;
+    location: string;
+    phone: string;
+    docs: Array<{ id: number; name: string; date: string; size: string }>;
+}
+
+function FamilyMemberCard({ member, styles }: { member: FamilyMember; styles: any }) {
+    const [isOpen, setIsOpen] = React.useState(true); // Toggle state for accordion
+
+    return (
+        <div className={styles["hr-family-card"]} style={{ marginBottom: '20px', border: '1px solid #e2e8f0', borderRadius: '12px', background: 'white' }}>
+            {/* Header of the individual card */}
+            <div className={styles["hr-doc-item"]} onClick={() => setIsOpen(!isOpen)} style={{ cursor: 'pointer' }}>
+                <div className={styles["hr-doc-left"]}>
+                    <div>
+                        <div className={styles["hr-doc-name"]}>
+                            {member.name} <span style={{ fontSize: '0.7rem', background: '#e0f2fes', color: '#0369a1', padding: '2px 8px', borderRadius: '10px', marginLeft: '8px' }}>{member.role}</span>
+                        </div>
+                        <div className={styles["hr-doc-meta"]}>
+                            {member.idCode} • {member.location}
+                        </div>
+                    </div>
+                </div>
+                <div className={styles["hr-doc-actions"]}>
+                    <button className={styles["hr-icon-btn"]} aria-label="Expand">
+                        <ChevronDown />
+                    </button>
+                </div>
+            </div>
+
+            {/* The documents that show up when "isOpen" is true */}
+            {isOpen && (
+                <div style={{ padding: '0 15px 15px 15px' }}>
+                    {member.docs.map((doc) => (
+                        <div className={styles["hr-doc-item"]} key={doc.id} style={{ borderTop: '1px solid #cccccc', marginTop: '5px' }}>
+                            <div className={styles["hr-doc-left"]}>
+                                📄
+                                <div style={{ marginLeft: '10px' }}>
+                                    <div className={styles["hr-doc-name"]} style={{ fontSize: '0.9rem' }}>{doc.name}</div>
+                                    <div className={styles["hr-doc-meta"]}>{doc.date} • {doc.size}</div>
+                                </div>
+                            </div>
+                            <div className={styles["hr-doc-actions"]}>
+                                <button className={styles["hr-icon-btn"]} aria-label="View">
+                                    <EyeIcon />
+                                </button>
+                                <button className={styles["hr-icon-btn"]} aria-label="Download">
+                                    <DownloadIcon />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
