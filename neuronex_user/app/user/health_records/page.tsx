@@ -72,10 +72,10 @@ const DownloadIcon = () => (
 
 // ── Data ──────────────────────────────────────────────────────────────────
 const DOCUMENTS = [
-    { id: 1, name: "MRI Scan - Spine", date: "03/25/2025", size: "5.7 MB", type: "PDF" },
-    { id: 2, name: "Blood Test - Complete Panel", date: "12/18/2024", size: "2.4 MB", type: "PDF" },
-    { id: 3, name: "Eye Examination Report", date: "08/05/2023", size: "1.6 MB", type: "PDF" },
-    { id: 4, name: "Arthritis Diagnosis Report", date: "01/10/2022", size: "2.1 MB", type: "PDF" },
+    { id: 1, name: "MRI Scan - Spine", date: "03/25/2021", size: "5.7 MB", type: "PDF" },
+    { id: 2, name: "Blood Test - Complete Panel", date: "12/18/2023", size: "2.4 MB", type: "PDF" },
+    { id: 3, name: "Eye Examination Report", date: "08/05/2024", size: "1.6 MB", type: "PDF" },
+    { id: 4, name: "Arthritis Diagnosis Report", date: "01/10/2026", size: "2.1 MB", type: "PDF" },
 ];
 
 const FAMILYDOCS = [
@@ -87,7 +87,7 @@ const FAMILYDOCS = [
         location: "Kolkata",
         phone: "+91 9584654422",
         docs: [
-            { id: 101, name: "Mother's Cardiac Checkup", date: "04/12/2026", size: "3.2 MB" },
+            { id: 101, name: "Mother's Cardiac Checkup", date: "04/12/2024", size: "3.2 MB" },
             { id: 102, name: "Mother's Pancreatic Checkup", date: "05/05/2026", size: "3.2 MB" },
         ]
     },
@@ -111,8 +111,8 @@ const FAMILYDOCS = [
         location: "Kolkata",
         phone: "+91 8956423669",
         docs: [
-            { id: 301, name: "Daughter's General Checkup Report", date: "11/20/2025", size: "2.9 MB" },
-            { id: 302, name: "Daughter's Pneumonia Report", date: "11/20/2025", size: "3.5 MB" },
+            { id: 301, name: "Daughter's General Checkup Report", date: "11/20/2021", size: "2.9 MB" },
+            { id: 302, name: "Daughter's Pneumonia Report", date: "11/20/2026", size: "3.5 MB" },
         ]
     }
 ];
@@ -185,7 +185,7 @@ export default function HealthRecords() {
                     {totalDocsCount} {totalDocsCount === 1 ? "document" : "documents"} found
                 </span>
                 <button className={styles["hr-filtered-btn"]}>
-                    <FilterIcon /> Filtered
+                    <FilterIcon /> Filtered by Date
                 </button>
             </div>
 
