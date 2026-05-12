@@ -19,12 +19,15 @@ import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import styles from './layout.module.css';
 import NextImage from 'next/image';
+import { FaHome, FaMapPin } from "react-icons/fa";
+import { CgFileDocument } from "react-icons/cg";
+import { IoIosAlert } from "react-icons/io";
 
 const navItems = [
-  { href: '/user', icon: '🏠', label: 'Home' },
-  { href: '/user/health_records', icon: '📄', label: 'Health Records' },
-  { href: '/user/ai_alert', icon: '🧠', label: 'AI Health Alerts' },
-  { href: '/user/nearby_help', icon: '📍', label: 'Nearby Help' },
+  { href: '/user', icon: <FaHome />, label: 'Home' },
+  { href: '/user/health_records', icon: <CgFileDocument />, label: 'Health Records' },
+  { href: '/user/ai_alert', icon: <IoIosAlert />, label: 'AI Health Alerts' },
+  { href: '/user/nearby_help', icon: <FaMapPin />, label: 'Nearby Help' },
 ];
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {

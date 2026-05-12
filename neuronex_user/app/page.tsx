@@ -4,6 +4,8 @@
 import React from "react";
 // 1. Import styles as an object to use CSS Modules
 import styles from "./landing_page.module.css";
+import { IoCallSharp } from "react-icons/io5";
+import { FaMapPin } from "react-icons/fa6";
 
 // ── Icon helpers ──
 // Define what the Icon component expects
@@ -130,13 +132,13 @@ export default function MedAxis() {
         <div className={styles["emergency-grid"]}>
           <div className={styles["emergency-card"]}>
             <div className={styles["emergency-card-label"]}>
-              <span>📞</span> 24/7 Helpline
+              <IoCallSharp size={20} /> 24/7 Helpline
             </div>
             <div className={styles["emergency-card-value"]}>+91 90077 34643</div>
           </div>
           <div className={styles["emergency-card"]}>
             <div className={styles["emergency-card-label"]}>
-              <span>📍</span> Nearest Centre
+              <FaMapPin size={20} /> Nearest Centre
             </div>
             <div className={styles["emergency-card-value"]}>Use STAR PG</div>
           </div>
