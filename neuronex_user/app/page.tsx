@@ -72,7 +72,7 @@ export default function MedAxis() {
             records, and stay connected with Kerala's digital health
             infrastructure.
           </p>
-          <button className={styles["btn-primary"]}>Access Health System</button>
+          {/* <button className={styles["btn-primary"]}>Access Health System</button> */}
         </div>
 
         {/* Quick Stats Card */}
@@ -106,7 +106,7 @@ export default function MedAxis() {
       </section>
 
       {/* ── Alerts ── */}
-      <section className={styles["alerts-section"]}>
+      {/* <section className={styles["alerts-section"]}>
         <h3 className={styles["alerts-title"]}>Recent Alerts</h3>
         {alerts.map((a, i) => (
           <div className={`${styles["alert-item"]} ${styles[a.type]}`} key={i}>
@@ -119,7 +119,7 @@ export default function MedAxis() {
             </span>
           </div>
         ))}
-      </section>
+      </section> */}
 
       {/* ── Emergency Contacts ── */}
       <section className={styles["emergency-section"]}>
