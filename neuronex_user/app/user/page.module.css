@@ -44,7 +44,7 @@
 }
 
 .medaxis-wrapper {
-    max-width: 1300px;
+    max-width: 100%;
     margin: 0 auto;
     font-family: var(--font-main);
     background: var(--gray-100);

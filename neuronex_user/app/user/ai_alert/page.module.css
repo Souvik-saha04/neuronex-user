@@ -14,7 +14,6 @@
 /* ── HEADER ── */
 .header {
     background: linear-gradient(135deg, #151519 5%, #031159 97%);
-
     text-align: center;
     padding: 40px 20px 36px;
 }
@@ -35,7 +34,7 @@
 
 /* ── MAIN LAYOUT ── */
 .main-content {
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 28px 24px;
     display: grid;

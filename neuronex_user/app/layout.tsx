@@ -22,6 +22,7 @@ import NextImage from 'next/image';
 import { FaHome, FaMapPin } from "react-icons/fa";
 import { CgFileDocument } from "react-icons/cg";
 import { IoIosAlert } from "react-icons/io";
+import { IoMenu } from "react-icons/io5";
 
 const navItems = [
   { href: '/user', icon: <FaHome />, label: 'Home' },
@@ -37,6 +38,8 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   const isLandingPage = pathname === "/";
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -73,28 +76,33 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
     <>
       <html lang="en">
         <body>
-          <div className={styles.container}>
-            <aside className={styles.sidebar}>
+          <div className={`${styles.container} ${isCollapsed ? styles.collapsed : ''}`}>
+            <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsedSidebar : ''}`}>
               <div className={styles.logo}>
-                <div className={styles.logoIcon}>
+                {!isCollapsed && (
                   <div className={styles.logoIcon}>
                     <NextImage
                       src="/logo.png"
                       alt="Medaxis Logo"
-                      width={155}
+                      width={140}
                       height={140}
                       priority
                     />
                   </div>
-                </div>
-                <div>
-                  <h1 className={styles["logo-text-wrapper"]}>MedAxis</h1>
-                  <p className={styles["logo-text-wrapper"]}>Digital Health Records</p>
-                </div>
+                )}
+                {!isCollapsed && (
+                  <div className={styles.logoText}>
+                    <h1 className={styles["logo-text-wrapper"]}>MedAxis</h1>
+                    <p className={styles["logo-text-wrapper"]}>Digital Health Records</p>
+                  </div>
+                )}
+                <button className={styles.menuButton} onClick={() => setIsCollapsed(!isCollapsed)}>
+                  <IoMenu size={24} />
+                </button>
               </div>
 
               <nav className={styles.nav}>
-                <p className={styles.navLabel}>MENU</p>
+                {!isCollapsed && <p className={styles.navLabel}>MENU</p>}
                 <ul className={styles.navMenu}>
                   {navItems.map((item) => (
                     <li key={item.href}>
@@ -103,34 +111,37 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                         className={`${styles.navLink} ${pathname === item.href ? styles.active : ''}`}
                       >
                         <span className={styles.navIcon}>{item.icon}</span>
-                        <span>{item.label}</span>
+                        {/* 5. Hide label when collapsed */}
+                        {!isCollapsed && <span>{item.label}</span>}
                       </Link>
                     </li>
                   ))}
                 </ul>
               </nav>
 
-              <div className={styles.sidebarBottom}>
-                {isLandingPage ? (
-                  /* --- LANDING PAGE VIEW: Show Buttons --- */
-                  <div className={styles["auth-container"]}>
-                    <button className={styles["login-btn"]} onClick={() => setShowModal(true)}>Log In</button>
-                    <button className={styles["register-btn"]} onClick={() => setShowRegisterModal(true)}>Create Account</button>
-                    <p className={styles["auth-footer"]}>
-                      Secure access via <strong>MedAxis ID</strong>
-                    </p>
-                  </div>
-                ) : (
-                  /* --- DASHBOARD VIEW: Show Profile --- */
-                  <div className={styles.userCard} onClick={() => setShowProfileModal(true)}>
-                    <div className={styles.userAvatar}>RK</div>
-                    <div className={styles.userInfo}>
-                      <p className={styles.userName}>Rajesh Kumar</p>
-                      <p className={styles.userId}>ID: MW001</p>
+              {!isCollapsed && (
+                <div className={styles.sidebarBottom}>
+                  {isLandingPage ? (
+                    /* --- LANDING PAGE VIEW: Show Buttons --- */
+                    <div className={styles["auth-container"]}>
+                      <button className={styles["login-btn"]} onClick={() => setShowModal(true)}>Log In</button>
+                      <button className={styles["register-btn"]} onClick={() => setShowRegisterModal(true)}>Create Account</button>
+                      <p className={styles["auth-footer"]}>
+                        Secure access via <strong>MedAxis ID</strong>
+                      </p>
                     </div>
-                  </div>
-                )}
-              </div>
+                  ) : (
+                    /* --- DASHBOARD VIEW: Show Profile --- */
+                    <div className={styles.userCard} onClick={() => setShowProfileModal(true)}>
+                      <div className={styles.userAvatar}>RK</div>
+                      <div className={styles.userInfo}>
+                        <p className={styles.userName}>Rajesh Kumar</p>
+                        <p className={styles.userId}>ID: MW001</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* --- Authentication Section --- */}
               {/* <div className={styles["auth-container"]}>

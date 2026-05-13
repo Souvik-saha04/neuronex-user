@@ -70,9 +70,8 @@ export default function MedAxis() {
         <div className={styles["hero-left"]}>
           <h1 className={styles["hero-title"]}>Welcome to MedAxis</h1>
           <p className={styles["hero-subtitle"]}>
-            Easily book appointments with top doctors, manage your health
-            records, and stay connected with Kerala's digital health
-            infrastructure.
+            Empowering your health journey through digital innovation.
+            Streamline your medical history, receive AI-driven health alerts, and connect with trusted local doctors instantly..
           </p>
           {/* <button className={styles["btn-primary"]}>Access Health System</button> */}
         </div>

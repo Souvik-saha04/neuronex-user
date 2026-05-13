@@ -51,7 +51,7 @@
 }
 
 .medaxis-wrapper {
-    max-width: 1300px;
+    max-width: 100%;
     margin: 0 auto;
     font-family: var(--font-main);
     background: var(--gray-100);
@@ -88,7 +88,7 @@
     font-size: 0.97rem;
     line-height: 1.6;
     margin-bottom: 26px;
-    max-width: 340px;
+    max-width: 570px;
 }
 
 .btn-primary {
