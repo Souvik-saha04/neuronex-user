@@ -5,6 +5,7 @@ import React from "react";
 import styles from "./page.module.css";
 import { IoCallSharp } from "react-icons/io5";
 import { FaMapPin } from "react-icons/fa6";
+import { useRouter } from 'next/navigation';
 
 
 // ── Icon helpers ──
@@ -59,6 +60,7 @@ const alerts = [
 
 // ── Component ──
 export default function MedAxis() {
+  const router = useRouter();
   return (
     // 2. Use styles['class-name'] for all classes
     <div className={styles["medaxis-wrapper"]}>
@@ -71,7 +73,12 @@ export default function MedAxis() {
             Empowering your health journey through digital innovation.
             Streamline your medical history, receive AI-driven health alerts, and connect with trusted local doctors instantly..
           </p>
-          <button className={styles["btn-primary"]}>Access Health System</button>
+          <button
+            className={styles["btn-primary"]}
+            onClick={() => router.push('/user/health_records')}
+          >
+            Access Health System
+          </button>
         </div>
 
         {/* Quick Stats Card */}

@@ -23,6 +23,10 @@ import { FaHome, FaMapPin } from "react-icons/fa";
 import { CgFileDocument } from "react-icons/cg";
 import { IoIosAlert } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const navItems = [
   { href: '/user', icon: <FaHome />, label: 'Home' },
@@ -74,7 +78,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <html lang="en">
+      <html lang="en" className={cn("font-sans", geist.variable)}>
         <body>
           <div className={`${styles.container} ${isCollapsed ? styles.collapsed : ''}`}>
             <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsedSidebar : ''}`}>
