@@ -15,6 +15,7 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
 
 import React, { useState, useEffect } from "react";
 import Link from 'next/link';
+import "./globals.css";
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import styles from './layout.module.css';
@@ -26,7 +27,7 @@ import { IoMenu } from "react-icons/io5";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const navItems = [
   { href: '/user', icon: <FaHome />, label: 'Home' },

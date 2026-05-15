@@ -3,6 +3,15 @@
 import React from 'react';
 import styles from './page.module.css';
 
+import { Card, CardContent } from "@/components/ui/card"
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
+
 // ── Icons ──────────────────────────────────────────────────────────────────
 const PhoneIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -43,6 +52,42 @@ const hospitals = [
         address: '789 Wellness Ave, Uptown, CA 90212',
         img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Victoria_Hospital_London.jpg/1200px-Victoria_Hospital_London.jpg',
     },
+    {
+        name: 'Metro Health Center',
+        phone: '+1 (555) 234-5678',
+        address: '456 Healthcare Blvd, Midtown, CA 90211',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Wuhu_No.2_People%27s_Hospital_20120825.jpg/1200px-Wuhu_No.2_People%27s_Hospital_20120825.jpg',
+    },
+    {
+        name: 'Victoria Hospital',
+        phone: '+1 (555) 345-6789',
+        address: '789 Wellness Ave, Uptown, CA 90212',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Victoria_Hospital_London.jpg/1200px-Victoria_Hospital_London.jpg',
+    },
+    {
+        name: 'Metro Health Center',
+        phone: '+1 (555) 234-5678',
+        address: '456 Healthcare Blvd, Midtown, CA 90211',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Wuhu_No.2_People%27s_Hospital_20120825.jpg/1200px-Wuhu_No.2_People%27s_Hospital_20120825.jpg',
+    },
+    {
+        name: 'Victoria Hospital',
+        phone: '+1 (555) 345-6789',
+        address: '789 Wellness Ave, Uptown, CA 90212',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Victoria_Hospital_London.jpg/1200px-Victoria_Hospital_London.jpg',
+    },
+    {
+        name: 'Metro Health Center',
+        phone: '+1 (555) 234-5678',
+        address: '456 Healthcare Blvd, Midtown, CA 90211',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Wuhu_No.2_People%27s_Hospital_20120825.jpg/1200px-Wuhu_No.2_People%27s_Hospital_20120825.jpg',
+    },
+    {
+        name: 'Victoria Hospital',
+        phone: '+1 (555) 345-6789',
+        address: '789 Wellness Ave, Uptown, CA 90212',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Victoria_Hospital_London.jpg/1200px-Victoria_Hospital_London.jpg',
+    },
 ];
 
 const doctors = [
@@ -67,9 +112,73 @@ const doctors = [
         address: '987 Care Center, Suite 300, CA 90215',
         img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&auto=format&fit=crop',
     },
+    {
+        name: 'Dr. Michael Chen',
+        specialty: 'Cardiologist',
+        phone: '+1 (555) 567-8901',
+        address: '654 Medical Park, Suite 200, CA 90214',
+        img: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&auto=format&fit=crop',
+    },
+    {
+        name: 'Dr. Emily Rodriguez',
+        specialty: 'Pediatrician',
+        phone: '+1 (555) 678-9012',
+        address: '987 Care Center, Suite 300, CA 90215',
+        img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&auto=format&fit=crop',
+    },
+    {
+        name: 'Dr. Michael Chen',
+        specialty: 'Cardiologist',
+        phone: '+1 (555) 567-8901',
+        address: '654 Medical Park, Suite 200, CA 90214',
+        img: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&auto=format&fit=crop',
+    },
+    {
+        name: 'Dr. Emily Rodriguez',
+        specialty: 'Pediatrician',
+        phone: '+1 (555) 678-9012',
+        address: '987 Care Center, Suite 300, CA 90215',
+        img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&auto=format&fit=crop',
+    },
 ];
 
 const clinics = [
+    {
+        name: '24/7 Urgent Care Clinic',
+        phone: '+1 (555) 789-0123',
+        address: '147 Emergency Lane, Downtown, CA 90216',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Aster_Labs_clinic.jpg/1200px-Aster_Labs_clinic.jpg',
+    },
+    {
+        name: 'Express Medical Clinic',
+        phone: '+1 (555) 890-1234',
+        address: '258 Quick Care Rd, Midtown, CA 90217',
+        img: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&auto=format&fit=crop',
+    },
+    {
+        name: 'Central Walk-In Clinic',
+        phone: '+1 (555) 901-2345',
+        address: '369 Family Health St, Uptown, CA 90218',
+        img: 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&auto=format&fit=crop',
+    },
+    {
+        name: '24/7 Urgent Care Clinic',
+        phone: '+1 (555) 789-0123',
+        address: '147 Emergency Lane, Downtown, CA 90216',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Aster_Labs_clinic.jpg/1200px-Aster_Labs_clinic.jpg',
+    },
+    {
+        name: 'Express Medical Clinic',
+        phone: '+1 (555) 890-1234',
+        address: '258 Quick Care Rd, Midtown, CA 90217',
+        img: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&auto=format&fit=crop',
+    },
+    {
+        name: 'Central Walk-In Clinic',
+        phone: '+1 (555) 901-2345',
+        address: '369 Family Health St, Uptown, CA 90218',
+        img: 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&auto=format&fit=crop',
+    },
     {
         name: '24/7 Urgent Care Clinic',
         phone: '+1 (555) 789-0123',
@@ -144,31 +253,82 @@ export default function NearbyHelp() {
                 {/* Hospitals */}
                 <section className={styles.section}>
                     <h2 className={styles["section-heading"]}>Nearby Hospitals</h2>
-                    <div className={styles["cards-grid"]}>
-                        {hospitals.map((h, i) => (
-                            <HealthCard key={i} {...h} />
-                        ))}
-                    </div>
+                    <Carousel
+                        opts={{ align: "start" }}
+                        className="w-full"
+                    >
+                        <CarouselContent className="-ml-4">
+                            {hospitals.map((h, i) => (
+                                /* 2. Apply the 'basis' sizing here: 
+                                   basis-full (1 card on mobile)
+                                   sm:basis-1/2 (2 cards on tablet)
+                                   lg:basis-1/3 (3 cards on desktop) */
+                                <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 gap-4">
+                                    <div className="p-1 h-full">
+                                        <HealthCard {...h} />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+
+                        {/* 3. Add the navigation arrows */}
+                        <CarouselPrevious className="-left-4" />
+                        <CarouselNext className="-right-4" />
+                    </Carousel>
                 </section>
 
                 {/* Doctors */}
                 <section className={styles.section}>
                     <h2 className={styles["section-heading"]}>Available Doctors</h2>
-                    <div className={styles["cards-grid"]}>
-                        {doctors.map((d, i) => (
-                            <HealthCard key={i} {...d} />
-                        ))}
-                    </div>
+                    <Carousel
+                        opts={{ align: "start" }}
+                        className="w-full"
+                    >
+                        <CarouselContent className="-ml-4">
+                            {hospitals.map((h, i) => (
+                                /* 2. Apply the 'basis' sizing here: 
+                                   basis-full (1 card on mobile)
+                                   sm:basis-1/2 (2 cards on tablet)
+                                   lg:basis-1/3 (3 cards on desktop) */
+                                <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                                    <div className="p-1 h-full">
+                                        <HealthCard {...h} />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+
+                        {/* 3. Add the navigation arrows */}
+                        <CarouselPrevious className="-left-4" />
+                        <CarouselNext className="-right-4" />
+                    </Carousel>
                 </section>
 
                 {/* Clinics */}
                 <section className={styles.section}>
                     <h2 className={styles["section-heading"]}>24/7 Available Clinics</h2>
-                    <div className={styles["cards-grid"]}>
-                        {clinics.map((c, i) => (
-                            <HealthCard key={i} {...c} />
-                        ))}
-                    </div>
+                    <Carousel
+                        opts={{ align: "start" }}
+                        className="w-full"
+                    >
+                        <CarouselContent className="-ml-4">
+                            {hospitals.map((h, i) => (
+                                /* 2. Apply the 'basis' sizing here: 
+                                   basis-full (1 card on mobile)
+                                   sm:basis-1/2 (2 cards on tablet)
+                                   lg:basis-1/3 (3 cards on desktop) */
+                                <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                                    <div className="p-1 h-full">
+                                        <HealthCard {...h} />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+
+                        {/* 3. Add the navigation arrows */}
+                        <CarouselPrevious className="-left-4" />
+                        <CarouselNext className="-right-4" />
+                    </Carousel>
                 </section>
 
             </div>

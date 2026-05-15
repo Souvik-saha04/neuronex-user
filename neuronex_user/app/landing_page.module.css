@@ -401,6 +401,7 @@
     opacity: 0.95;
     margin-bottom: 2px;
     color: #f8fafc;
+    z-index: 0;
 }
 
 .emergency-card-value {

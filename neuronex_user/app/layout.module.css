@@ -260,24 +260,24 @@
 }
 
 /* The dark, blurred background */
-.modalOverlay {
+/* .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.4);
-  /* Dim the background */
+
   backdrop-filter: blur(8px);
-  /* This creates the professional blur effect */
+
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 99999;
   isolation: isolate;
   transform: translateZ(0);
-  /* Ensures it sits above everything */
-}
+
+} */
 
 /* The actual form card */
 .modalContent {
