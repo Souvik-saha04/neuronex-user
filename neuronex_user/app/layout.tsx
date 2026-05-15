@@ -1,25 +1,10 @@
-/* import "./globals.css";
-
-export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) 
-{
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
-}
- */
-
-
 'use client';
-
 import React, { useState, useEffect } from "react";
 import Link from 'next/link';
 import "./globals.css";
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import styles from './layout.module.css';
-import NextImage from 'next/image';
 import { FaHome, FaMapPin } from "react-icons/fa";
 import { CgFileDocument } from "react-icons/cg";
 import { IoIosAlert } from "react-icons/io";
@@ -47,35 +32,27 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // 1. Close the modal first so the "blur" and form vanish
     setShowModal(false);
-
     console.log("Login successful, redirecting...");
-
-    // 2. Then move the user to the dashboard
     router.push('/user');
   };
 
   const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault(); // Stop the page from reloading
-
-    // 1. Close the modal instantly
-    setShowRegisterModal(false);
-
+    e.preventDefault();
+    setShowRegisterModal(true);
     console.log("Worker Registered. Redirecting...");
-
-    // 2. Send them to the dashboard
     router.push('/user');
   };
 
   useEffect(() => {
-    if (showModal || showProfileModal) {
+    if (showModal || showProfileModal || showRegisterModal) {
       document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = 'var(--scrollbar-width, 0px)';
     } else {
       document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
     }
-  }, [showModal, showProfileModal]);
+  }, [showModal, showProfileModal, showRegisterModal]);
 
   return (
     <>
@@ -86,19 +63,14 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
               <div className={styles.logo}>
                 {!isCollapsed && (
                   <div className={styles.logoIcon}>
-                    <NextImage
+                    <img className="w-full h-full"
                       src="/logo.png"
                       alt="Medaxis Logo"
-                      width={140}
-                      height={140}
-                      priority
                     />
                   </div>
                 )}
                 {!isCollapsed && (
                   <div className={styles.logoText}>
-                    <h1 className={styles["logo-text-wrapper"]}>MedAxis</h1>
-                    <p className={styles["logo-text-wrapper"]}>Digital Health Records</p>
                   </div>
                 )}
                 <button className={styles.menuButton} onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -116,7 +88,6 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                         className={`${styles.navLink} ${pathname === item.href ? styles.active : ''}`}
                       >
                         <span className={styles.navIcon}>{item.icon}</span>
-                        {/* 5. Hide label when collapsed */}
                         {!isCollapsed && <span>{item.label}</span>}
                       </Link>
                     </li>
@@ -148,25 +119,6 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                 </div>
               )}
 
-              {/* --- Authentication Section --- */}
-              {/* <div className={styles["auth-container"]}>
-              <button className={styles["login-btn"]} onClick={() => setShowModal(true)}>
-                Log In
-              </button>
-              <button className={styles["register-btn"]} >
-                Create Account
-              </button>
-
-            </div> */}
-
-              {/* <div className={styles.systemStatus}>
-              <div className={styles.statusHeader}>
-                <span className={styles.statusLabel}>System Status</span>
-                <span className={styles.statusBadge}>Online</span>
-              </div>
-              <p className={styles.statusTime}>Last sync: 2 mins ago</p>
-            </div> */}
-
               {showModal && (
                 <div className={styles.modalOverlay}>
                   <div className={styles.modalContent}>
@@ -195,7 +147,6 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                           Resend OTP?
                         </button>
                       </div>
-
                       <button type="submit" className={styles.submitBtn}>
                         Login
                       </button>

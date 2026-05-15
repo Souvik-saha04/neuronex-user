@@ -1,14 +1,9 @@
 "use client";
-// import Link from 'next/link';
-// import { usePathname } from 'next/navigation';
 import React from "react";
-// 1. Import styles as an object to use CSS Modules
 import styles from "./landing_page.module.css";
 import { IoCallSharp } from "react-icons/io5";
 import { FaMapPin } from "react-icons/fa6";
 
-// ── Icon helpers ──
-// Define what the Icon component expects
 interface IconProps {
   children: React.ReactNode;
   className?: string;
@@ -58,11 +53,8 @@ const alerts = [
 ];
 
 // ── Component ──
-
-
 export default function MedAxis() {
   return (
-    // 2. Use styles['class-name'] for all classes
     <div className={styles["medaxis-wrapper"]}>
 
       {/* ── Hero ── */}
@@ -73,15 +65,13 @@ export default function MedAxis() {
             Empowering your health journey through digital innovation.
             Streamline your medical history, receive AI-driven health alerts, and connect with trusted local doctors instantly..
           </p>
-          {/* <button className={styles["btn-primary"]}>Access Health System</button> */}
         </div>
 
         {/* Quick Stats Card */}
-        <div className={styles["quick-stats-card"]}>
+        <div className={`${styles["quick-stats-card"]} transition-all duration-250 ease-in-out hover:-translate-y-1 hover:shadow-xl cursor-default`}>
           <div className={styles["quick-stats-title"]}>Quick Stats</div>
           {stats.map((s) => (
             <div className={styles["stat-item"]} key={s.label}>
-              {/* Mapping dynamic classes like 'blue', 'green', 'purple' */}
               <div className={`${styles["stat-icon"]} ${styles[s.iconClass]}`}>{s.icon}</div>
               <div className={styles["stat-info"]}>
                 <div className={styles["stat-value"]}>{s.value}</div>
@@ -106,22 +96,6 @@ export default function MedAxis() {
         </div>
       </section>
 
-      {/* ── Alerts ── */}
-      {/* <section className={styles["alerts-section"]}>
-        <h3 className={styles["alerts-title"]}>Recent Alerts</h3>
-        {alerts.map((a, i) => (
-          <div className={`${styles["alert-item"]} ${styles[a.type]}`} key={i}>
-            <div className={styles["alert-left"]}>
-              <span className={styles["alert-icon"]}>{a.icon}</span>
-              {a.text}
-            </div>
-            <span className={`${styles["alert-badge"]} ${styles[a.type]}`}>
-              {a.type === "done" ? "Done" : "Warning"}
-            </span>
-          </div>
-        ))}
-      </section> */}
-
       {/* ── Emergency Contacts ── */}
       <section className={styles["emergency-section"]}>
         <div className={styles["emergency-header"]}>
@@ -143,9 +117,6 @@ export default function MedAxis() {
           </div>
         </div>
       </section>
-
-
-
     </div>
   );
 }
