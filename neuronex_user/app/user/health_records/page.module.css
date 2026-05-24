@@ -1,0 +1,364 @@
+/* ===== health-records/page.module.css ===== */
+
+.page {
+  min-height: 100vh;
+  background: #f0f4f8;
+  padding: 32px 40px 60px;
+  font-family: 'Segoe UI', 'Inter', sans-serif;
+}
+
+/* ---- Header ---- */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1a2332;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  font-size: 0.92rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.uploadBtn {
+  background: #1a6fc4;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.uploadBtn:hover {
+  background: #0d4f9e;
+  transform: translateY(-1px);
+}
+
+/* ---- Summary Row ---- */
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.summaryCard {
+  border-radius: 14px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  transition: transform 0.2s;
+}
+
+.summaryCard:hover {
+  transform: translateY(-2px);
+}
+
+.summaryIcon {
+  font-size: 1.4rem;
+}
+
+.summaryValue {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.summaryLabel {
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* ---- Tabs ---- */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 7px 18px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tab:hover {
+  border-color: #1a6fc4;
+  color: #1a6fc4;
+}
+
+.tabActive {
+  background: #1a6fc4 !important;
+  border-color: #1a6fc4 !important;
+  color: #fff !important;
+}
+
+/* ---- Two Column ---- */
+.twoCol {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a2332;
+  margin: 0 0 14px;
+}
+
+/* ---- Record List ---- */
+.recordList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.recordCard {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border: 1.5px solid #f1f5f9;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.recordCard:hover {
+  box-shadow: 0 6px 20px rgba(26, 111, 196, 0.1);
+  border-color: #bfdbfe;
+}
+
+.recordLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.recordIconBox {
+  font-size: 1.6rem;
+  background: #f0f4f8;
+  border-radius: 12px;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.recordType {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.recordTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a2332;
+  margin: 0 0 5px;
+}
+
+.recordMeta {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0 0 2px;
+}
+
+.recordDate {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.recordRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.recordStatus {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.viewBtn {
+  background: #eff6ff;
+  color: #1a6fc4;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.viewBtn:hover {
+  background: #dbeafe;
+}
+
+/* ---- Vaccination ---- */
+.vaccinationList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.vaccineCard {
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vaccineIcon {
+  font-size: 1.5rem;
+}
+
+.vaccineInfo {
+  flex: 1;
+}
+
+.vaccineName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a2332;
+  margin: 0 0 3px;
+}
+
+.vaccineMeta {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.vaccineComplete {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.vaccineDue {
+  background: #fff8e1;
+  border: 1.5px solid #fbbf24;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vaccineDueIcon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.vaccineDueTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #7a4f00;
+  margin: 0 0 3px;
+}
+
+.vaccineDueSub {
+  font-size: 0.78rem;
+  color: #92600a;
+  margin: 0;
+}
+
+.scheduleBtn {
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.scheduleBtn:hover {
+  background: #d97706;
+}
+
+/* ---- Tips ---- */
+.tipsCard {
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.tipsTitle {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #14532d;
+  margin: 0 0 10px;
+}
+
+.tipsList {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.tipsList li {
+  font-size: 0.83rem;
+  color: #166534;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1100px) {
+  .twoCol { grid-template-columns: 1fr; }
+  .summaryRow { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .page { padding: 20px 16px 40px; }
+  .header { flex-direction: column; gap: 12px; }
+  .summaryRow { grid-template-columns: repeat(2, 1fr); }
+  .recordCard { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .recordRight { flex-direction: row; align-items: center; }
+}
