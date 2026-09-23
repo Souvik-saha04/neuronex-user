@@ -1,125 +1,331 @@
-// FILE: app/user/health-records/page.tsx
+"use client";
 
-const records = [
-  { id: 1, type: 'Medical History', title: 'Hypertension – Chronic', date: '12 Jan 2025', doctor: 'Dr. Priya Menon', hospital: 'Govt. Medical College, Kollam', icon: '🫀', status: 'Ongoing', statusColor: '#e65100' },
-  { id: 2, type: 'Past Illness', title: 'Typhoid Fever – Recovered', date: '03 Aug 2024', doctor: 'Dr. Anil Kumar', hospital: 'Taluk Hospital, Kollam', icon: '🤒', status: 'Resolved', statusColor: '#2e7d32' },
-  { id: 3, type: 'Prescription', title: 'Amlodipine 5mg – Monthly', date: '15 Mar 2025', doctor: 'Dr. Priya Menon', hospital: 'Govt. Medical College, Kollam', icon: '💊', status: 'Active', statusColor: '#1565c0' },
+import React, { useState } from "react";
+
+import styles from "./page.module.css";
+
+// ── SVG Icons ──
+const SearchIcon = () => (
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+    </svg>
+);
+
+const UploadIcon = () => (
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+);
+
+const FilterIcon = () => (
+    <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    </svg>
+);
+
+const CopyIcon = () => (
+    <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <rect x="9" y="9" width="13" height="13" rx="2" />
+        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+    </svg>
+);
+
+const ChevronDown = () => (
+    <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <polyline points="6 9 12 15 18 9" />
+    </svg>
+);
+
+const LocationIcon = () => (
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" />
+        <circle cx="12" cy="10" r="3" />
+    </svg>
+);
+
+const DocIcon = () => (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7}>
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+        <polyline points="10 9 9 9 8 9" />
+    </svg>
+);
+
+const EyeIcon = () => (
+    <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+        <circle cx="12" cy="12" r="3" />
+    </svg>
+);
+
+const DownloadIcon = () => (
+    <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+);
+
+// ── Data ──────────────────────────────────────────────────────────────────
+const DOCUMENTS = [
+    { id: 1, name: "MRI Scan - Spine", date: "03/25/2021", size: "5.7 MB", type: "PDF" },
+    { id: 2, name: "Blood Test - Complete Panel", date: "12/18/2023", size: "2.4 MB", type: "PDF" },
+    { id: 3, name: "Eye Examination Report", date: "08/05/2024", size: "1.6 MB", type: "PDF" },
+    { id: 4, name: "Arthritis Diagnosis Report", date: "01/10/2026", size: "2.1 MB", type: "PDF" },
 ];
 
-const vaccinations = [
-  { name: 'COVID-19 (Covishield)', date: '22 Jun 2021', dose: 'Dose 2/2', icon: '💉', bg: '#e3f2fd' },
-  { name: 'Hepatitis B', date: '10 Feb 2019', dose: 'Dose 3/3', icon: '💉', bg: '#e8f5e9' },
+const FAMILYDOCS = [
+    {
+        id: "mother",
+        name: "Sunita Kumar", // Example name
+        role: "Mother",
+        idCode: "MW001-M",
+        location: "Kolkata",
+        phone: "+91 9584654422",
+        docs: [
+            { id: 101, name: "Mother's Cardiac Checkup", date: "04/12/2024", size: "3.2 MB" },
+            { id: 102, name: "Mother's Pancreatic Checkup", date: "05/05/2026", size: "3.2 MB" },
+        ]
+    },
+    {
+        id: "father",
+        name: "Ramesh Kumar", // Example name
+        role: "Father",
+        idCode: "MW001-F",
+        location: "Kolkata",
+        phone: "+91 9584654422",
+        docs: [
+            { id: 201, name: "Father's Diabetes Report", date: "11/20/2025", size: "4.5 MB" },
+            { id: 202, name: "Father's General Checkup", date: "09/10/2026", size: "3.2 MB" },
+        ]
+    },
+    {
+        id: "daughter",
+        name: "Souviksha Kumar",
+        role: "Daughter",
+        idCode: "MW001-D",
+        location: "Kolkata",
+        phone: "+91 8956423669",
+        docs: [
+            { id: 301, name: "Daughter's General Checkup Report", date: "11/20/2021", size: "2.9 MB" },
+            { id: 302, name: "Daughter's Pneumonia Report", date: "11/20/2026", size: "3.5 MB" },
+        ]
+    }
 ];
 
-const summaryCards = [
-  { label: 'Medical Records', value: '4', icon: '📁', bg: '#e3f2fd', accent: '#1565c0' },
-  { label: 'Vaccinations', value: '2', icon: '💉', bg: '#e8f5e9', accent: '#2e7d32' },
-  { label: 'Prescriptions', value: '3', icon: '💊', bg: '#f3e5f5', accent: '#7b1fa2' },
-  { label: 'Lab Reports', value: '1', icon: '🧪', bg: '#fff3e0', accent: '#e65100' },
-];
+// ── Component ─────────────────────────────────────────────────────────────
+export default function HealthRecords() {
+    const [search, setSearch] = useState("");
+    const [sort, setSort] = useState("date");
+    const [activeTab, setActiveTab] = useState("Personal");
+    const [searchQuery, setSearchQuery] = useState("");
 
-const filterTabs = ['All', 'Medical History', 'Vaccinations', 'Prescriptions', 'Lab Reports'];
+    // 1. Filter Personal Docs
+    const filteredPersonalDocs = DOCUMENTS.filter(doc =>
+        doc.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-export default function HealthRecordsPage() {
-  return (
-    <div style={{ minHeight: '100vh', background: '#f0f4f8', padding: '32px 40px 60px', fontFamily: "'Segoe UI', Inter, sans-serif" }}>
+    // 2. Filter Family Members and their nested docs
+    const filteredFamily = FAMILYDOCS.map(member => ({
+        ...member,
+        docs: member.docs.filter(doc =>
+            doc.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    })).filter(member =>
+        member.docs.length > 0 || member.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
-        <div>
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1a2332', margin: '0 0 6px' }}>📋 Personal Health Records</h1>
-          <p style={{ fontSize: '0.92rem', color: '#64748b', margin: 0 }}>Your complete medical history, all in one place</p>
-        </div>
-        <a href="/user/upload-prescription" style={{ background: '#1a6fc4', color: '#fff', fontSize: '0.88rem', fontWeight: 600, padding: '11px 22px', borderRadius: 12, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-          📤 Upload Prescription
-        </a>
-      </div>
+    // 3. Update the Count Logic
+    const totalDocsCount = activeTab === "Personal"
+        ? filteredPersonalDocs.length
+        : filteredFamily.reduce((acc, m) => acc + m.docs.length, 0);
 
-      {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 28 }}>
-        {summaryCards.map((s) => (
-          <div key={s.label} style={{ background: s.bg, borderRadius: 14, padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 5, boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }}>
-            <span style={{ fontSize: '1.4rem' }}>{s.icon}</span>
-            <span style={{ fontSize: '1.8rem', fontWeight: 800, color: s.accent, lineHeight: 1 }}>{s.value}</span>
-            <span style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 500 }}>{s.label}</span>
-          </div>
-        ))}
-      </div>
+    return (
+        <div className={styles["hr-page"]}>
 
-      {/* Filter Tabs */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 28, flexWrap: 'wrap' }}>
-        {filterTabs.map((t, i) => (
-          <button key={t} style={{ background: i === 0 ? '#1a6fc4' : '#fff', color: i === 0 ? '#fff' : '#475569', border: `1.5px solid ${i === 0 ? '#1a6fc4' : '#e2e8f0'}`, borderRadius: 20, padding: '7px 18px', fontSize: '0.85rem', fontWeight: 500, cursor: 'pointer' }}>
-            {t}
-          </button>
-        ))}
-      </div>
-
-      {/* Two Column */}
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 24 }}>
-
-        {/* Records List */}
-        <div>
-          <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#1a2332', margin: '0 0 14px' }}>Health Records</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {records.map((r) => (
-              <div key={r.id} style={{ background: '#fff', borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', border: '1.5px solid #f1f5f9' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-                  <div style={{ fontSize: '1.6rem', background: '#f0f4f8', borderRadius: 12, width: 52, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{r.icon}</div>
-                  <div>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#94a3b8', display: 'block', marginBottom: 3 }}>{r.type}</span>
-                    <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1a2332', margin: '0 0 5px' }}>{r.title}</h3>
-                    <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 2px' }}>🩺 {r.doctor} · {r.hospital}</p>
-                    <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0 }}>📅 {r.date}</p>
-                  </div>
+            {/* ── Header ── */}
+            <header className={styles["hr-header"]}>
+                <div className={styles["hr-header-left"]}>
+                    <h1>My Health Records</h1>
+                    <p>Rajesh Kumar - MW001</p>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 12px', borderRadius: 20, background: r.statusColor + '18', color: r.statusColor }}>{r.status}</span>
-                  <button style={{ background: '#eff6ff', color: '#1a6fc4', border: 'none', borderRadius: 8, padding: '7px 14px', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>View →</button>
+
+                <button className={styles["header-upload-btn"]}>
+                    <UploadIcon />
+                    <span>New Document</span>
+                </button>
+            </header>
+
+            {/* ── Search ── */}
+            <div className={styles["hr-search-wrap"]}>
+                <div className={styles["hr-search"]}>
+                    <SearchIcon />
+                    <input
+                        type="text"
+                        placeholder="Search documents..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Right Column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-          {/* Vaccinations */}
-          <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#1a2332', margin: 0 }}>Vaccination Records</h2>
-          {vaccinations.map((v) => (
-            <div key={v.name} style={{ background: v.bg, borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
-              <span style={{ fontSize: '1.5rem' }}>{v.icon}</span>
-              <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1a2332', margin: '0 0 3px' }}>{v.name}</h3>
-                <p style={{ fontSize: '0.78rem', color: '#64748b', margin: 0 }}>{v.dose} · {v.date}</p>
-              </div>
-              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#2e7d32', background: '#e8f5e9', padding: '4px 10px', borderRadius: 20 }}>✅ Complete</span>
+                <div className={styles["hr-filter-row"]}>
+                    <button className={styles["hr-filter-btn"]} aria-label="filter">
+                        <FilterIcon />
+                    </button>
+                </div>
             </div>
-          ))}
 
-          {/* Due Vaccine */}
-          <div style={{ background: '#fff8e1', border: '1.5px solid #fbbf24', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>⚠️</span>
-            <div style={{ flex: 1 }}>
-              <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#7a4f00', margin: '0 0 3px' }}>Influenza Vaccine Due</h3>
-              <p style={{ fontSize: '0.78rem', color: '#92600a', margin: 0 }}>Annual flu shot recommended. Last taken: 2023</p>
+            {/* ── Meta Bar ── */}
+            <div className={styles["hr-meta-bar"]}>
+                <span className={styles["hr-count"]}>
+                    {totalDocsCount} {totalDocsCount === 1 ? "document" : "documents"} found
+                </span>
+                <button className={styles["hr-filtered-btn"]}>
+                    <FilterIcon /> Filtered by Date
+                </button>
             </div>
-            <button style={{ background: '#f59e0b', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 14px', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>Schedule</button>
-          </div>
 
-          {/* Tips */}
-          <div style={{ background: '#f0fdf4', border: '1.5px solid #bbf7d0', borderRadius: 14, padding: '18px 20px' }}>
-            <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#14532d', margin: '0 0 10px' }}>💡 Health Tips for You</h3>
-            <ul style={{ paddingLeft: 18, margin: 0 }}>
-              {['Monitor your blood pressure daily as advised', 'Take Amlodipine at the same time every day', 'Annual checkup overdue — book now'].map((tip) => (
-                <li key={tip} style={{ fontSize: '0.83rem', color: '#166534', marginBottom: 6, lineHeight: 1.5 }}>{tip}</li>
-              ))}
-            </ul>
-          </div>
+            {/* ── buttons ── */}
+            <div className={styles["hr-buttons"]}>
+                <button
+                    className={`${styles["hr-personal-btn"]} ${activeTab === "Personal" ? styles.selected : styles.unselected}`}
+                    onClick={() => setActiveTab("Personal")}
+                >
+                    Personal
+                </button>
+                <button
+                    className={`${styles["hr-family-btn"]} ${activeTab === "Family" ? styles.selected : styles.unselected}`}
+                    onClick={() => setActiveTab("Family")}
+                >
+                    Family
+                </button>
+            </div>
 
+            {/* ── Body ── */}
+            <div className={styles["hr-body"]}>
+                <div className={styles["hr-patient-card"]}>
+
+                    {/* Patient Info Header (Stays constant) */}
+                    <div className={styles["hr-patient-info"]}>
+                        <div className={styles["hr-patient-top"]}>
+                            <div>
+                                <div className={styles["hr-patient-name-row"]}>
+                                    <span className={styles["hr-patient-name"]}>Rajesh Kumar</span>
+                                    <span className={styles["hr-verified-badge"]}>Verified</span>
+                                </div>
+                                <div className={styles["hr-patient-id"]}>MW001</div>
+                            </div>
+                        </div>
+
+                        <div className={styles["hr-patient-location-row"]}>
+                            <div className={styles["hr-location"]}>
+                                <LocationIcon />
+                                Kolkata
+                            </div>
+                            <div className={styles["hr-phone"]}>+91 9584654422</div>
+                        </div>
+                    </div>
+
+                    {/* ── Document List Container ── */}
+                    <div className={styles["hr-doc-list"]}>
+                        {activeTab === "Personal" ? (
+                            // Render Personal View using the SEARCH FILTERED docs
+                            filteredPersonalDocs.map((doc) => (
+                                <div className={styles["hr-doc-item"]} key={doc.id}>
+                                    <div className={styles["hr-doc-left"]}>
+                                        <div className={styles["hr-doc-icon"]}><DocIcon /></div>
+                                        <div>
+                                            <div className={styles["hr-doc-name"]}>{doc.name}</div>
+                                            <div className={styles["hr-doc-meta"]}>
+                                                {doc.date} &bull; {doc.size} &bull; PDF
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className={styles["hr-doc-actions"]}>
+                                        <button className={styles["hr-icon-btn"]} aria-label="View">
+                                            <EyeIcon />
+                                        </button>
+                                        <button className={styles["hr-icon-btn"]} aria-label="Download">
+                                            <DownloadIcon />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            // Render Family View using the SEARCH FILTERED members
+                            filteredFamily.map((member) => (
+                                <FamilyMemberCard key={member.id} member={member} styles={styles} />
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
+}
+
+interface FamilyMember {
+    id: string;
+    name: string;
+    role: string;
+    idCode: string;
+    location: string;
+    phone: string;
+    docs: Array<{ id: number; name: string; date: string; size: string }>;
+}
+
+function FamilyMemberCard({ member, styles }: { member: FamilyMember; styles: any }) {
+    const [isOpen, setIsOpen] = React.useState(true); // Toggle state for accordion
+
+    return (
+        <div className={styles["hr-family-card"]} style={{ marginBottom: '20px', border: '1px solid #e2e8f0', borderRadius: '12px', background: 'white' }}>
+            {/* Header of the individual card */}
+            <div className={styles["hr-doc-item"]} onClick={() => setIsOpen(!isOpen)} style={{ cursor: 'pointer' }}>
+                <div className={styles["hr-doc-left"]}>
+                    <div>
+                        <div className={styles["hr-doc-name"]}>
+                            {member.name} <span style={{ fontSize: '0.7rem', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '10px', marginLeft: '8px' }}>{member.role}</span>
+                        </div>
+                        <div className={styles["hr-doc-meta"]}>
+                            {member.idCode} • {member.location}
+                        </div>
+                    </div>
+                </div>
+                <div className={styles["hr-doc-actions"]}>
+                    <button className={styles["hr-icon-btn"]} aria-label="Expand">
+                        <ChevronDown />
+                    </button>
+                </div>
+            </div>
+
+            {/* The documents that show up when "isOpen" is true */}
+            {isOpen && (
+                <div style={{ padding: '0 15px 15px 15px' }}>
+                    {member.docs.map((doc) => (
+                        <div className={styles["hr-doc-item"]} key={doc.id} style={{ borderTop: '1px solid #cccccc', marginTop: '5px' }}>
+                            <div className={styles["hr-doc-left"]}>
+                                📄
+                                <div style={{ marginLeft: '10px' }}>
+                                    <div className={styles["hr-doc-name"]} style={{ fontSize: '0.9rem' }}>{doc.name}</div>
+                                    <div className={styles["hr-doc-meta"]}>{doc.date} • {doc.size}</div>
+                                </div>
+                            </div>
+                            <div className={styles["hr-doc-actions"]}>
+                                <button className={styles["hr-icon-btn"]} aria-label="View">
+                                    <EyeIcon />
+                                </button>
+                                <button className={styles["hr-icon-btn"]} aria-label="Download">
+                                    <DownloadIcon />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 }
