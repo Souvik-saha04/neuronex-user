@@ -13,7 +13,7 @@ import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
-
+const BASE_URL="http://127.0.0.1:8000"
 const navItems = [
   { href: '/user', icon: <FaHome />, label: 'Home' },
   { href: '/user/health_records', icon: <CgFileDocument />, label: 'Health Records' },
@@ -23,6 +23,9 @@ const navItems = [
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   const [showModal, setShowModal] = useState(false);
+  const [email,setEmail]=useState("");
+  const [password,setPassword]=useState("");
+  const [data,setData]=useState<any>(null);
   const router = useRouter();
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
@@ -30,13 +33,34 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async(e: React.FormEvent) => {
     e.preventDefault();
-    setShowModal(false);
-    console.log("Login successful, redirecting...");
-    router.push('/user');
-  };
+    const res=await fetch(`${BASE_URL}/accounts/login/`,
+      {
+        method:"GET",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          "email":email,
+          "password":password
+        })
 
+      }
+    )
+    const data= await res.json();
+    if(res.ok)
+    {
+      setData(data);
+      setShowModal(false);
+      console.log("Login successful, redirecting...");
+      router.push('/user');
+    }
+    else{
+      console.log("Login Failed");
+    }
+    
+  };
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     setShowRegisterModal(true);
@@ -98,7 +122,6 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
               {!isCollapsed && (
                 <div className={styles.sidebarBottom}>
                   {isLandingPage ? (
-                    /* --- LANDING PAGE VIEW: Show Buttons --- */
                     <div className={styles["auth-container"]}>
                       <button className={styles["login-btn"]} onClick={() => setShowModal(true)}>Log In</button>
                       <button className={styles["register-btn"]} onClick={() => setShowRegisterModal(true)}>Create Account</button>
@@ -107,7 +130,6 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                       </p>
                     </div>
                   ) : (
-                    /* --- DASHBOARD VIEW: Show Profile --- */
                     <div className={styles.userCard} onClick={() => setShowProfileModal(true)}>
                       <div className={styles.userAvatar}>RK</div>
                       <div className={styles.userInfo}>
@@ -122,31 +144,17 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
               {showModal && (
                 <div className={styles.modalOverlay}>
                   <div className={styles.modalContent}>
-                    {/* Close Button */}
                     <button className={styles.closeBtn} onClick={() => setShowModal(false)}>&times;</button>
 
                     <h2>Email Verification</h2>
                     <br></br>
-                    <p className={styles.modalSubtext}>Please enter your email id where the verification code is sent.</p>
+                    <p className={styles.modalSubtext}>Please enter your email id and the password.</p>
 
                     <form className={styles.modalForm} onSubmit={handleLogin}>
                       <label>Email id</label>
-                      <input type="text" placeholder="Enter Your Email ID" required />
-
-                      <label className={styles.modalLabel}>OTP</label>
-                      <div className={styles.otpInputWrapper}>
-                        <input
-                          type="text"
-                          placeholder="000000"
-                          maxLength={6}
-                          className={styles.otpInput}
-                          inputMode="numeric"
-                          required
-                        />
-                        <button type="button" className={styles.resendBtn}>
-                          Resend OTP?
-                        </button>
-                      </div>
+                      <input type="text" placeholder="Enter Your Email ID" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                      <input type="text" placeholder="Enter Your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                      
                       <button type="submit" className={styles.submitBtn}>
                         Login
                       </button>
@@ -158,40 +166,36 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
               {showProfileModal && (
                 <div className={styles.modalOverlay}>
                   <div className={styles.profileModalContent}>
-                    {/* Close Header */}
                     <div className={styles.profileHeader}>
                       <h3>User Profile</h3>
                       <button className={styles.closeBtn} onClick={() => setShowProfileModal(false)}>&times;</button>
                     </div>
 
-                    {/* Profile Picture Section */}
                     <div className={styles.profileAvatarSection}>
                       <div className={styles.largeAvatar}>RK</div>
-                      <h4>Rajesh Kumar</h4>
+                      <h4>{data.name}</h4>
                       <span className={styles.verifiedBadge}>Verified Account</span>
                     </div>
 
-                    {/* Credentials List */}
                     <div className={styles.profileInfoList}>
                       <div className={styles.infoItem}>
                         <label>MedAxis ID</label>
-                        <p>MW001</p>
+                        <p>M{data.id}</p>
                       </div>
                       <div className={styles.infoItem}>
                         <label>Email Address</label>
-                        <p>rajesh.k@email.com</p>
+                        <p>{data.email}</p>
                       </div>
                       <div className={styles.infoItem}>
                         <label>Phone Number</label>
-                        <p>+91 98546 54422</p>
+                        <p>{data.phno}</p>
                       </div>
                       <div className={styles.infoItem}>
                         <label>Location</label>
-                        <p>Kolkata, West Bengal</p>
+                        <p>{data.address}</p>
                       </div>
                     </div>
 
-                    {/* Action Button */}
                     <button className={styles.editProfileBtn} onClick={() => alert("Edit feature coming soon!")}>
                       Edit Profile
                     </button>

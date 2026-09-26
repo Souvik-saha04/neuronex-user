@@ -52,6 +52,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(
         auto_now=True
     )
+    address=models.CharField(max_length=200,blank=True, null=True, default="")
+    state=models.CharField(max_length=50,blank=True, null=True, default="")
+    pincode=models.CharField(max_length= 6 ,blank=True,null = True)
+    phno=models.CharField(max_length=10, blank=True , default="")
 
     objects = UserManager()
 

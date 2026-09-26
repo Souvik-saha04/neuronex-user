@@ -5,4 +5,5 @@ urlpatterns=[
     # it maps the request calls to its appropiate function within the class 
     path("register/",RegisterView.as_view(),name="register"),
     path("login/",LoginView.as_view(),name="login"),
+    path("profile/",ProfileView.as_view(),name="profile")
 ]

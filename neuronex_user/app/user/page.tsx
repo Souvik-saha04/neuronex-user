@@ -1,15 +1,12 @@
 "use client";
 
 import React from "react";
-// 1. Import styles as an object to use CSS Modules
 import styles from "./page.module.css";
 import { IoCallSharp } from "react-icons/io5";
 import { FaMapPin } from "react-icons/fa6";
 import { useRouter } from 'next/navigation';
 
 
-// ── Icon helpers ──
-// Define what the Icon component expects
 interface IconProps {
   children: React.ReactNode;
   className?: string;
@@ -21,7 +18,6 @@ const Icon = ({ children, className }: IconProps) => (
   </span>
 );
 
-// ── Data ──
 const stats = [
   { icon: "👥", iconClass: "blue", value: "50,000+", label: "Active Users" },
   { icon: "✅", iconClass: "green", value: "100,000+", label: "Appointments" },
@@ -58,14 +54,11 @@ const alerts = [
   { icon: "🕐", text: "2 health checkups overdue this month", type: "warning" },
 ];
 
-// ── Component ──
 export default function MedAxis() {
   const router = useRouter();
   return (
-    // 2. Use styles['class-name'] for all classes
     <div className={styles["medaxis-wrapper"]}>
 
-      {/* ── Hero ── */}
       <section className={styles["hero-section"]}>
         <div className={styles["hero-left"]}>
           <h1 className={styles["hero-title"]}>Welcome to MedAxis</h1>
@@ -81,12 +74,10 @@ export default function MedAxis() {
           </button>
         </div>
 
-        {/* Quick Stats Card */}
         <div className={styles["quick-stats-card"]}>
           <div className={styles["quick-stats-title"]}>Quick Stats</div>
           {stats.map((s) => (
             <div className={styles["stat-item"]} key={s.label}>
-              {/* Mapping dynamic classes like 'blue', 'green', 'purple' */}
               <div className={`${styles["stat-icon"]} ${styles[s.iconClass]}`}>{s.icon}</div>
               <div className={styles["stat-info"]}>
                 <div className={styles["stat-value"]}>{s.value}</div>
@@ -97,7 +88,6 @@ export default function MedAxis() {
         </div>
       </section>
 
-      {/* ── Features ── */}
       <section className={styles["features-section"]}>
         <h2 className={styles["features-title"]}>Our Features</h2>
         <div className={styles["features-grid"]}>
@@ -111,7 +101,6 @@ export default function MedAxis() {
         </div>
       </section>
 
-      {/* ── Alerts ── */}
       <section className={styles["alerts-section"]}>
         <h3 className={styles["alerts-title"]}>Recent Alerts</h3>
         {alerts.map((a, i) => (
@@ -127,7 +116,6 @@ export default function MedAxis() {
         ))}
       </section>
 
-      {/* ---Emergency section--- */}
       <section className={styles["emergency-section"]}>
         <div className={styles["emergency-header"]}>
           <span>🔔</span>
