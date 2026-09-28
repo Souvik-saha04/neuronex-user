@@ -1,154 +1,338 @@
-// FILE: app/user/upload-prescription/page.tsx
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import {
+  UploadCloud,
+  FileText,
+  FolderOpen,
+  CheckCircle2,
+  Loader2,
+  Check,
+  X,
+  Image as ImageIcon,
+  HardDrive,
+  Upload,
+  ExternalLink,
+  ArrowRight,
+} from 'lucide-react';
 
-const mockExtracted = {
-  medicines: ['Amlodipine 5mg – 1 tab daily', 'Atorvastatin 10mg – 1 tab at night', 'Aspirin 75mg – 1 tab after breakfast'],
-  diagnosis: 'Hypertension with mild dyslipidaemia',
-  doctor: 'Dr. Priya Menon',
-  date: '22 Apr 2025',
-  duration: '30 days',
-  aiSummary: 'Your doctor prescribed medicines to control your blood pressure and cholesterol levels. Amlodipine helps relax blood vessels, Atorvastatin reduces cholesterol, and Aspirin prevents blood clots. Take them consistently every day. Avoid salty food and monitor your BP at home.',
-};
+const BASE_URL = 'http://127.0.0.1:8000';
 
-const howSteps = [
-  { num: '1', icon: '📤', label: 'Upload prescription image or PDF' },
-  { num: '2', icon: '🔍', label: 'AI scans and reads the text' },
-  { num: '3', icon: '💊', label: 'Medicines & diagnosis extracted' },
-  { num: '4', icon: '🧠', label: 'AI summary in simple language' },
+const documentTypes = [
+  { value: 'PRESCRIPTION', label: 'Prescription' },
+  { value: 'REPORT', label: 'Medical Report' },
+  { value: 'SCAN', label: 'Scan / Imaging' },
+  { value: 'LAB', label: 'Lab Report' },
+  { value: 'DISCHARGE', label: 'Discharge Summary' },
+  { value: 'OTHER', label: 'Other' },
 ];
 
-const processingSteps = ['Detecting text regions', 'Reading handwriting & print', 'Identifying medicines', 'Generating AI summary'];
+const stepLabels = ['Choose file', 'Add details', 'Done'];
 
-const infoRows = [
-  { label: 'Diagnosis', value: mockExtracted.diagnosis },
-  { label: 'Doctor', value: mockExtracted.doctor },
-  { label: 'Date', value: mockExtracted.date },
-  { label: 'Duration', value: mockExtracted.duration },
-];
+const cardStyle = {
+  background: '#fff',
+  borderRadius: 16,
+  padding: 32,
+  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+} as const;
+
+const labelStyle = { fontSize: '0.85rem', fontWeight: 600, color: '#1a2332' } as const;
+
+const inputStyle = {
+  padding: '11px 14px',
+  border: '1px solid #e2e8f0',
+  borderRadius: 10,
+  fontSize: '0.9rem',
+  color: '#1a2332',
+  background: '#f8fafc',
+  outline: 'none',
+} as const;
+
+const primaryBtn = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 8,
+  background: '#1a6fc4',
+  color: '#fff',
+  border: 'none',
+  borderRadius: 10,
+  padding: '11px 22px',
+  fontSize: '0.88rem',
+  fontWeight: 600,
+  cursor: 'pointer',
+  textDecoration: 'none',
+} as const;
+
+const secondaryBtn = {
+  ...primaryBtn,
+  background: '#fff',
+  color: '#1a6fc4',
+  border: '1.5px solid #1a6fc4',
+  padding: '10px 22px',
+} as const;
+
+interface UploadedDocument {
+  id: number;
+  title: string;
+  document_type: string;
+  document_date: string | null;
+  file_url: string;
+  file_name: string;
+  file_size: number;
+  uploaded_at: string;
+}
+
+function formatSize(bytes: number): string {
+  const mb = bytes / (1024 * 1024);
+  return mb >= 1 ? `${mb.toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`;
+}
 
 export default function UploadPrescriptionPage() {
-  const [step, setStep] = useState<'upload' | 'processing' | 'result'>('upload');
+  const [step, setStep] = useState<'upload' | 'form' | 'processing' | 'result'>('upload');
+  const [file, setFile] = useState<File | null>(null);
+  const [title, setTitle] = useState('');
+  const [documentType, setDocumentType] = useState('PRESCRIPTION');
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
+  const [uploadedDoc, setUploadedDoc] = useState<UploadedDocument | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function simulate() {
-    setStep('processing');
-    setTimeout(() => setStep('result'), 2200);
+  const currentStep = step === 'upload' ? 0 : step === 'result' ? 2 : 1;
+
+  function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+    setFile(selected);
+    setTitle(selected.name);
+    setStep('form');
+  }
+
+  async function handleUpload(e: React.FormEvent) {
+  e.preventDefault();
+  const token = localStorage.getItem('medaxis_token');
+  if (!token || !file) {
+    setError('You must be logged in and select a file.');
+    return;
+  }
+
+  setStep('processing');
+  setError('');
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('title', title);
+  formData.append('document_type', documentType);
+  formData.append('description', description);
+
+  try {
+    const res = await fetch(`${BASE_URL}/accounts/upload/`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    const result = await res.json();
+
+    if (res.ok) {
+      setUploadedDoc(result.document);
+      setStep('result');
+    } else {
+      setError(
+        res.status === 401
+          ? 'Session expired. Please log in again.'
+          : result?.error || 'Upload failed. Please try again.'
+      );
+      setStep('form');
+    }
+  } catch (err) {
+    console.error('Upload request failed:', err);
+    setError('Could not reach the server. Please try again.');
+    setStep('form');
+  }
+}
+
+  function resetFlow() {
+    setFile(null);
+    setTitle('');
+    setDocumentType('PRESCRIPTION');
+    setDescription('');
+    setError('');
+    setUploadedDoc(null);
+    setStep('upload');
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f0f4f8', padding: '32px 40px 60px', fontFamily: "'Segoe UI', Inter, sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: '#f0f4f8', padding: '40px 40px 60px', fontFamily: "'Segoe UI', Inter, sans-serif" }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
-      {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1a2332', margin: '0 0 6px' }}>📤 Upload Prescription</h1>
-        <p style={{ fontSize: '0.92rem', color: '#64748b', margin: 0 }}>Take a photo or upload a file — our AI extracts the details for you</p>
-      </div>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
 
-      {/* STEP: Upload */}
-      {step === 'upload' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 28, alignItems: 'start' }}>
-
-          {/* Drop Zone */}
-          <div
-            onClick={simulate}
-            style={{ background: '#fff', border: '2.5px dashed #bfdbfe', borderRadius: 20, padding: '64px 40px', textAlign: 'center', cursor: 'pointer' }}
-          >
-            <div style={{ fontSize: '3.5rem', marginBottom: 16 }}>📄</div>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1a2332', margin: '0 0 8px' }}>Drag & drop your prescription here</h2>
-            <p style={{ fontSize: '0.87rem', color: '#64748b', margin: '0 0 28px' }}>Supports JPG, PNG, PDF — up to 10MB</p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 14 }}>
-              <button onClick={simulate} style={{ background: '#1a6fc4', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 22px', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>📁 Choose File</button>
-              <button onClick={simulate} style={{ background: '#fff', color: '#1a6fc4', border: '1.5px solid #1a6fc4', borderRadius: 10, padding: '10px 22px', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>📷 Take Photo</button>
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 14, background: '#e3f2fd', color: '#1a6fc4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <UploadCloud size={26} />
           </div>
-
-          {/* How It Works */}
-          <div style={{ background: '#fff', borderRadius: 16, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1a2332', margin: '0 0 18px' }}>How OCR Extraction Works</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {howSteps.map((s) => (
-                <div key={s.num} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ background: '#1a6fc4', color: '#fff', fontSize: '0.75rem', fontWeight: 700, borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{s.num}</div>
-                  <span style={{ fontSize: '1.1rem' }}>{s.icon}</span>
-                  <p style={{ fontSize: '0.83rem', color: '#334155', margin: 0, lineHeight: 1.4 }}>{s.label}</p>
-                </div>
-              ))}
-            </div>
+          <div>
+            <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1a2332', margin: '0 0 4px' }}>Upload Document</h1>
+            <p style={{ fontSize: '0.92rem', color: '#64748b', margin: 0 }}>Upload a prescription, report or scan to keep it with your records</p>
           </div>
         </div>
-      )}
 
-      {/* STEP: Processing */}
-      {step === 'processing' && (
-        <div style={{ background: '#fff', borderRadius: 20, padding: '64px 40px', textAlign: 'center', maxWidth: 540, margin: '0 auto', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-          <div style={{ width: 64, height: 64, border: '5px solid #e3f2fd', borderTopColor: '#1a6fc4', borderRadius: '50%', animation: 'spin 0.9s linear infinite', margin: '0 auto 24px' }} />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1a2332', margin: '0 0 8px' }}>Scanning your prescription…</h2>
-          <p style={{ fontSize: '0.9rem', color: '#64748b', margin: '0 0 28px' }}>Our AI is reading the text and extracting details</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, textAlign: 'left', maxWidth: 300, margin: '0 auto' }}>
-            {processingSteps.map((s) => (
-              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.85rem', color: '#475569' }}>
-                <span style={{ width: 8, height: 8, background: '#1a6fc4', borderRadius: '50%', flexShrink: 0, display: 'inline-block' }} />
-                {s}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28, flexWrap: 'wrap' }}>
+          {stepLabels.map((label, i) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{
+                width: 26, height: 26, borderRadius: '50%',
+                background: i <= currentStep ? '#1a6fc4' : '#e2e8f0',
+                color: i <= currentStep ? '#fff' : '#94a3b8',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '0.75rem', fontWeight: 700,
+              }}>
+                {i < currentStep ? <Check size={14} /> : i + 1}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* STEP: Result */}
-      {step === 'result' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-          {/* Result Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-            <span style={{ background: '#e8f5e9', color: '#2e7d32', fontSize: '0.9rem', fontWeight: 700, padding: '8px 18px', borderRadius: 20 }}>✅ Extraction Successful</span>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button style={{ background: '#fff', color: '#1a6fc4', border: '1.5px solid #1a6fc4', borderRadius: 10, padding: '10px 22px', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>💾 Save to Records</button>
-              <button onClick={() => setStep('upload')} style={{ background: '#1a6fc4', color: '#fff', border: 'none', borderRadius: 10, padding: '11px 22px', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>📤 Upload Another</button>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: i <= currentStep ? '#1a2332' : '#94a3b8' }}>{label}</span>
+              {i < stepLabels.length - 1 && (
+                <div style={{ width: 40, height: 2, background: i < currentStep ? '#1a6fc4' : '#e2e8f0' }} />
+              )}
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Result Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".jpg,.jpeg,.png,.pdf"
+          onChange={handleFileSelected}
+          style={{ display: 'none' }}
+        />
 
-            {/* Extracted Info */}
-            <div style={{ background: '#fff', borderRadius: 16, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#1a2332', margin: '0 0 18px' }}>📋 Extracted Information</h3>
-              {infoRows.map((row) => (
-                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #f1f5f9' }}>
-                  <span style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 500 }}>{row.label}</span>
-                  <span style={{ fontSize: '0.88rem', color: '#1a2332', fontWeight: 600, textAlign: 'right', maxWidth: '60%' }}>{row.value}</span>
-                </div>
-              ))}
-              <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1a2332', margin: '18px 0 10px' }}>💊 Medicines Prescribed</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {mockExtracted.medicines.map((m) => (
-                  <div key={m} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.87rem', color: '#334155', background: '#f0f4f8', padding: '10px 14px', borderRadius: 8 }}>
-                    <span style={{ width: 8, height: 8, background: '#1a6fc4', borderRadius: '50%', flexShrink: 0, display: 'inline-block' }} />
-                    {m}
+        {step === 'upload' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, alignItems: 'stretch' }}>
+
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              style={{ ...cardStyle, border: '2px dashed #bfdbfe', padding: '56px 32px', textAlign: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <div style={{ width: 84, height: 84, borderRadius: '50%', background: '#e3f2fd', color: '#1a6fc4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                <UploadCloud size={40} />
+              </div>
+              <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1a2332', margin: '0 0 8px' }}>Click to choose a file</h2>
+              <p style={{ fontSize: '0.87rem', color: '#64748b', margin: '0 0 24px' }}>Supports JPG, PNG, PDF — up to 10MB</p>
+              <button style={primaryBtn}><FolderOpen size={17} /> Choose File</button>
+            </div>
+
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#1a2332', margin: '0 0 20px' }}>Accepted files</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                {[
+                  { icon: <FileText size={20} />, title: 'PDF documents', text: 'Reports, prescriptions, discharge summaries' },
+                  { icon: <ImageIcon size={20} />, title: 'JPG or PNG images', text: 'Photos of prescriptions or scans' },
+                  { icon: <HardDrive size={20} />, title: 'Up to 10MB', text: 'Per file' },
+                ].map((item) => (
+                  <div key={item.title} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{ width: 42, height: 42, borderRadius: 12, background: '#f0f4f8', color: '#1a6fc4', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {item.icon}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1a2332' }}>{item.title}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{item.text}</div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
+        )}
 
-            {/* AI Summary */}
-            <div style={{ background: 'linear-gradient(135deg,#0f172a,#1e3a5f)', borderRadius: 16, padding: 24, boxShadow: '0 6px 24px rgba(15,23,42,0.25)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                <span style={{ background: 'rgba(255,255,255,0.15)', fontSize: '0.8rem', fontWeight: 700, padding: '4px 12px', borderRadius: 20, color: '#fff' }}>🧠 AI</span>
-                <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', margin: 0 }}>Summary in Simple Language</h3>
+        {step === 'form' && file && (
+          <form onSubmit={handleUpload} style={{ ...cardStyle, maxWidth: 560, display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: '#f0f4f8', borderRadius: 12, padding: '12px 16px' }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: '#e3f2fd', color: '#1a6fc4', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <FileText size={20} />
               </div>
-              <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.65, margin: '0 0 20px' }}>{mockExtracted.aiSummary}</p>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: 'rgba(255,200,0,0.12)', border: '1px solid rgba(255,200,0,0.25)', borderRadius: 10, padding: '12px 14px', fontSize: '0.8rem', color: 'rgba(255,220,100,0.95)', lineHeight: 1.5 }}>
-                <span>⚠️</span>
-                <span>Always follow your doctor's advice. This is an AI-generated summary for reference only.</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1a2332', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</div>
+                <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{formatSize(file.size)}</div>
+              </div>
+              <button type="button" onClick={resetFlow} aria-label="Remove file"
+                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex' }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <label style={labelStyle}>Title</label>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} required style={inputStyle} />
+
+            <label style={labelStyle}>Document Type</label>
+            <select value={documentType} onChange={(e) => setDocumentType(e.target.value)} style={inputStyle}>
+              {documentTypes.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+
+            <label style={labelStyle}>Notes (optional)</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3}
+              style={{ ...inputStyle, resize: 'vertical' }} />
+
+            {error && <p style={{ color: '#c0392b', fontSize: '0.85rem', margin: 0 }}>{error}</p>}
+
+            <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+              <button type="button" onClick={resetFlow} style={secondaryBtn}>Cancel</button>
+              <button type="submit" style={primaryBtn}><Upload size={17} /> Upload</button>
+            </div>
+          </form>
+        )}
+
+        {step === 'processing' && (
+          <div style={{ ...cardStyle, padding: '64px 40px', textAlign: 'center', maxWidth: 560 }}>
+            <div style={{ color: '#1a6fc4', display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+              <Loader2 size={52} style={{ animation: 'spin 0.9s linear infinite' }} />
+            </div>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1a2332', margin: '0 0 8px' }}>Uploading your document…</h2>
+            <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0 }}>Please wait while we save it to your records</p>
+          </div>
+        )}
+
+        {step === 'result' && uploadedDoc && (
+          <div style={{ ...cardStyle, maxWidth: 560 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+              <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#e8f5e9', color: '#2e7d32', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CheckCircle2 size={28} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a2332', margin: '0 0 2px' }}>Upload Successful</h3>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Your document has been saved to your records</p>
               </div>
             </div>
 
-          </div>
-        </div>
-      )}
+            {[
+              { label: 'Title', value: uploadedDoc.title },
+              { label: 'Type', value: uploadedDoc.document_type },
+              { label: 'File', value: uploadedDoc.file_name },
+              { label: 'Size', value: formatSize(uploadedDoc.file_size) },
+            ].map((row) => (
+              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '12px 0', borderBottom: '1px solid #f1f5f9' }}>
+                <span style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 500 }}>{row.label}</span>
+                <span style={{ fontSize: '0.88rem', color: '#1a2332', fontWeight: 600, textAlign: 'right', wordBreak: 'break-word' }}>{row.value}</span>
+              </div>
+            ))}
 
+            <a href={uploadedDoc.file_url} target="_blank" rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 16, color: '#1a6fc4', fontSize: '0.87rem', fontWeight: 600, textDecoration: 'none' }}>
+              View Document <ExternalLink size={15} />
+            </a>
+
+            <div style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
+              <a href="/user/health_records" style={secondaryBtn}>
+                Go to Health Records <ArrowRight size={16} />
+              </a>
+              <button onClick={resetFlow} style={primaryBtn}>
+                <Upload size={17} /> Upload Another
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

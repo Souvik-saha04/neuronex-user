@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager
-# Create your models here.
+from django.conf import settings
+
 
 class UserManager(BaseUserManager):
     def create_user(self,email,password=None,**extra_fields):
@@ -65,3 +66,65 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+
+
+
+class MedicalDocument(models.Model):
+
+    DOCUMENT_TYPES = [
+        ("REPORT", "Medical Report"),
+        ("PRESCRIPTION", "Prescription"),
+        ("SCAN", "Scan / Imaging"),
+        ("LAB", "Lab Report"),
+        ("DISCHARGE", "Discharge Summary"),
+        ("OTHER", "Other"),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="medical_documents"
+    )
+
+    title = models.CharField(max_length=200)
+
+    document_type = models.CharField(
+        max_length=20,
+        choices=DOCUMENT_TYPES,
+        default="OTHER"
+    )
+
+    description = models.TextField(blank=True)
+
+    document_date = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    file_url = models.URLField()
+
+    file_name = models.CharField(max_length=255)
+
+    file_size = models.PositiveIntegerField(
+        help_text="File size in bytes"
+    )
+
+    file_type = models.CharField(
+        max_length=100
+    )
+
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["-uploaded_at"]
+
+    def __str__(self):
+        return self.title

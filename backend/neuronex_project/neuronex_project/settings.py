@@ -50,12 +50,24 @@ REST_FRAMEWORK = {
 }
 from datetime import timedelta
 SIMPLE_JWT={
-    "ACCESS_TOKEN_LIFETIME":timedelta(minutes=1),
+    "ACCESS_TOKEN_LIFETIME":timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME":timedelta(days=1)
 }
 
+
+import cloudinary
+import os
+from dotenv import load_dotenv
+load_dotenv()
+cloudinary.config(
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
+    secure=True,
+)
+
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
