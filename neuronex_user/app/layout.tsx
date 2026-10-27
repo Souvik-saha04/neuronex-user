@@ -77,13 +77,13 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
-
+  const [registerSuccess, setRegisterSuccess] = useState("");
   const router = useRouter();
   const pathname = usePathname();
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const [registerForm, setRegisterForm] = useState<RegisterForm>(initialRegisterForm);
   const [registerLoading, setRegisterLoading] = useState(false);
@@ -138,38 +138,54 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
     }
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setRegisterLoading(true);
-    setRegisterError("");
+  
+const handleRegister = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setRegisterLoading(true);
+  setRegisterError("");
+  setRegisterSuccess("");
 
-    try {
-      const res = await fetch(`${BASE_URL}/accounts/register/`, {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/accounts/register/`,
+      {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(registerForm),
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        setShowRegisterModal(false);
-        setRegisterForm(initialRegisterForm);
-        router.push('/user');
-      } else {
-        const firstError =
-          typeof result === "object" ? Object.values(result).flat()[0] : undefined;
-        setRegisterError(
-          (firstError as string) || "Registration failed. Please check your details."
-        );
       }
-    } catch (err) {
-      console.error("Registration request failed:", err);
-      setRegisterError("Could not reach the server. Please try again.");
-    } finally {
-      setRegisterLoading(false);
+    );
+
+    const result = await res.json();
+
+    if (res.ok) {
+      setRegisterForm(initialRegisterForm);
+      setRegisterSuccess(
+        result.message ||
+          "Registration successful! Please check your email to verify your account."
+      );
+    } else {
+      const firstError =
+        typeof result === "object"
+          ? Object.values(result).flat()[0]
+          : undefined;
+
+      setRegisterError(
+        (firstError as string) ||
+          "Registration failed. Please check your details."
+      );
     }
-  };
+  } catch (err) {
+    console.error("Registration request failed:", err);
+    setRegisterError(
+      "Could not reach the server. Please try again."
+    );
+  } finally {
+    setRegisterLoading(false);
+  }
+};
+
 
   const handleLogout = () => {
     setUser(null);
@@ -232,7 +248,14 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                       <button className={styles["login-btn"]} onClick={() => setShowModal(true)}>
                         Log In
                       </button>
-                      <button className={styles["register-btn"]} onClick={() => setShowRegisterModal(true)}>
+                      <button
+                        className={styles["register-btn"]}
+                        onClick={() => {
+                          setRegisterError("");
+                          setRegisterSuccess("");
+                          setShowRegisterModal(true);
+                        }}
+                      >
                         Create Account
                       </button>
                       <p className={styles["auth-footer"]}>
@@ -348,115 +371,181 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                 </div>
               )}
 
-              {showRegisterModal && (
-                <div className={styles.modalOverlay}>
-                  <div className={`${styles.modalContent} ${styles.scrollableModal}`}>
-                    <button
-                      className={styles.closeBtn}
-                      onClick={() => {
-                        setShowRegisterModal(false);
-                        setRegisterError("");
-                      }}
-                    >
-                      &times;
-                    </button>
+            {showRegisterModal && (
+              <div className={styles.modalOverlay}>
+                <div
+                  className={`${styles.modalContent} ${styles.scrollableModal}`}
+                >
+                  <button
+                    type="button"
+                    className={styles.closeBtn}
+                    onClick={() => {
+                      setShowRegisterModal(false);
+                      setRegisterError("");
+                      setRegisterSuccess("");
+                    }}
+                  >
+                    &times;
+                  </button>
 
-                    <h2 className={styles.formMainTitle}>Register New Migrant Worker</h2>
+                  {registerSuccess ? (
+                    <div className={styles.registrationForm}>
+                      <h2 className={styles.formMainTitle}>
+                        Registration Successful!
+                      </h2>
 
-                    <form className={styles.registrationForm} onSubmit={handleRegister}>
-                      <div className={styles.formSectionBox}>
-                        <h3>Personal Information</h3>
-                        <label>First Name *</label>
-                        <input
-                          type="text"
-                          name="first_name"
-                          placeholder="Enter Your First Name"
-                          value={registerForm.first_name}
-                          onChange={handleRegisterChange}
-                          required
-                        />
+                      <p role="status">
+                        {registerSuccess}
+                      </p>
 
-                        <label>Last Name *</label>
-                        <input
-                          type="text"
-                          name="last_name"
-                          placeholder="Enter Your Last Name"
-                          value={registerForm.last_name}
-                          onChange={handleRegisterChange}
-                          required
-                        />
-                      </div>
+                      <p>
+                        We have requested an email verification link for
+                        your account. Please check your inbox and spam folder.
+                      </p>
 
-                      <div className={styles.formSectionBox}>
-                        <h3>Contact Information</h3>
-                        <label>Email *</label>
-                        <input
-                          type="email"
-                          name="email"
-                          placeholder="email@example.com"
-                          value={registerForm.email}
-                          onChange={handleRegisterChange}
-                          required
-                        />
+                      <p>
+                        You must verify your email before logging in.
+                      </p>
 
-                        <label>Password *</label>
-                        <input
-                          type="password"
-                          name="password"
-                          placeholder="Create a password"
-                          value={registerForm.password}
-                          onChange={handleRegisterChange}
-                          required
-                        />
-
-                        <label>Phone Number</label>
-                        <input
-                          type="tel"
-                          name="phno"
-                          placeholder="Enter Phone Number"
-                          value={registerForm.phno}
-                          onChange={handleRegisterChange}
-                        />
-                      </div>
-
-                      <div className={styles.formSectionBox}>
-                        <h3>Address Information</h3>
-                        <label>Address</label>
-                        <input
-                          type="text"
-                          name="address"
-                          placeholder="Enter Your Address"
-                          value={registerForm.address}
-                          onChange={handleRegisterChange}
-                        />
-
-                        <label>State</label>
-                        <select name="state" value={registerForm.state} onChange={handleRegisterChange}>
-                          <option value="">Select State</option>
-                          <option value="kerala">Kerala</option>
-                          <option value="west-bengal">West Bengal</option>
-                        </select>
-
-                        <label>Pincode</label>
-                        <input
-                          type="text"
-                          name="pincode"
-                          placeholder="Enter Pincode"
-                          maxLength={6}
-                          value={registerForm.pincode}
-                          onChange={handleRegisterChange}
-                        />
-                      </div>
-
-                      {registerError && <p className={styles.errorText}>{registerError}</p>}
-
-                      <button type="submit" className={styles.submitBtn} disabled={registerLoading}>
-                        {registerLoading ? "Submitting..." : "Submit Registration"}
+                      <button
+                        type="button"
+                        className={styles.submitBtn}
+                        onClick={() => {
+                          setShowRegisterModal(false);
+                          setRegisterSuccess("");
+                          setRegisterError("");
+                          setShowModal(true);
+                        }}
+                      >
+                        Go to Login
                       </button>
-                    </form>
-                  </div>
+                    </div>
+                  ) : (
+                    <>
+                      <h2 className={styles.formMainTitle}>
+                        Register New Migrant Worker
+                      </h2>
+
+                      <form
+                        className={styles.registrationForm}
+                        onSubmit={handleRegister}
+                      >
+                        <div className={styles.formSectionBox}>
+                          <h3>Personal Information</h3>
+
+                          <label>First Name *</label>
+                          <input
+                            type="text"
+                            name="first_name"
+                            placeholder="Enter Your First Name"
+                            value={registerForm.first_name}
+                            onChange={handleRegisterChange}
+                            required
+                          />
+
+                          <label>Last Name *</label>
+                          <input
+                            type="text"
+                            name="last_name"
+                            placeholder="Enter Your Last Name"
+                            value={registerForm.last_name}
+                            onChange={handleRegisterChange}
+                            required
+                          />
+                        </div>
+
+                        <div className={styles.formSectionBox}>
+                          <h3>Contact Information</h3>
+
+                          <label>Email *</label>
+                          <input
+                            type="email"
+                            name="email"
+                            placeholder="email@example.com"
+                            value={registerForm.email}
+                            onChange={handleRegisterChange}
+                            required
+                          />
+
+                          <label>Password *</label>
+                          <input
+                            type="password"
+                            name="password"
+                            placeholder="Create a password"
+                            value={registerForm.password}
+                            onChange={handleRegisterChange}
+                            required
+                          />
+
+                          <label>Phone Number</label>
+                          <input
+                            type="tel"
+                            name="phno"
+                            placeholder="Enter Phone Number"
+                            value={registerForm.phno}
+                            onChange={handleRegisterChange}
+                          />
+                        </div>
+
+                        <div className={styles.formSectionBox}>
+                          <h3>Address Information</h3>
+
+                          <label>Address</label>
+                          <input
+                            type="text"
+                            name="address"
+                            placeholder="Enter Your Address"
+                            value={registerForm.address}
+                            onChange={handleRegisterChange}
+                          />
+
+                          <label>State</label>
+                          <select
+                            name="state"
+                            value={registerForm.state}
+                            onChange={handleRegisterChange}
+                          >
+                            <option value="">Select State</option>
+                            <option value="kerala">Kerala</option>
+                            <option value="west-bengal">West Bengal</option>
+                          </select>
+
+                          <label>Pincode</label>
+                          <input
+                            type="text"
+                            name="pincode"
+                            placeholder="Enter Pincode"
+                            maxLength={6}
+                            value={registerForm.pincode}
+                            onChange={handleRegisterChange}
+                          />
+                        </div>
+
+                        {registerError && (
+                          <p
+                            className={styles.errorText}
+                            role="alert"
+                          >
+                            {registerError}
+                          </p>
+                        )}
+
+                        <button
+                          type="submit"
+                          className={styles.submitBtn}
+                          disabled={registerLoading}
+                        >
+                          {registerLoading
+                            ? "Submitting..."
+                            : "Submit Registration"}
+                        </button>
+                      </form>
+                    </>
+                  )}
                 </div>
-              )}
+              </div>
+            )}
+
             </aside>
 
             <main className={styles.main}>{children}</main>

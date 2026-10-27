@@ -128,3 +128,24 @@ class MedicalDocument(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+
+from django.conf import settings
+from django.db import models
+
+
+class EmailVerification(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="email_verification"
+    )
+
+    is_verified = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.is_verified}"

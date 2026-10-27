@@ -8,4 +8,6 @@ urlpatterns=[
     path("profile/",ProfileView.as_view(),name="profile"),
     path("upload/", DocumentUploadView.as_view(), name="document-upload"),
     path("documents/", DocumentListView.as_view(), name="document-list"),
+    path("verify-email/",VerifyEmailView.as_view(),name="verify-email"),
+    path("resend-verification/",ResendVerificationEmailView.as_view(),name="resend-verification")
 ]

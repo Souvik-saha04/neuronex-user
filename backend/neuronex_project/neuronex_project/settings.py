@@ -150,8 +150,27 @@ STATIC_URL = 'static/'
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend"
+)
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = os.getenv("HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL",
+    "http://localhost:3000"
+)
+# Docker Redis is published on IPv6 loopback; IPv4 localhost is a separate Windows Redis.
+CELERY_BROKER_URL = "redis://[::1]:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Asia/Kolkata"

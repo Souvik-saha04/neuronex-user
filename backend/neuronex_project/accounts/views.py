@@ -5,21 +5,53 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework.permissions import AllowAny
 from .serializers import RegisterSerializer, LoginSerializer
 from .models import MedicalDocument
+from django.core import signing
+from accounts.tokens import verify_verification_token
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from django.db import transaction
+
+from accounts.models import EmailVerification
+from accounts.tasks import send_verification_email
+from accounts.tokens import generate_verification_token
+
 
 ALLOWED_TYPES = ["application/pdf", "image/jpeg", "image/png"]
 MAX_SIZE = 10 * 1024 * 1024
 
 
+from django.db import transaction
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
 class RegisterView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
+
         if serializer.is_valid():
-            user = serializer.save()
+            with transaction.atomic():
+                user = serializer.save(is_active=False)
+
+                verification, _ = EmailVerification.objects.get_or_create(
+                    user=user
+                )
+
+                token = generate_verification_token(user)
+
+                if not verification.is_verified:
+                    transaction.on_commit(
+                        lambda: send_verification_email.delay(
+                            user.pk,
+                            token
+                        )
+                    )
+
             return Response({
-                "message": "user created successfully",
+                "message": "Registration successful. Please verify your email before logging in.",
                 "user": {
                     "id": user.id,
                     "first_name": user.first_name,
@@ -28,14 +60,29 @@ class RegisterView(APIView):
                 }
             }, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
+
         if serializer.is_valid():
             user = serializer.validated_data["user"]
+
+            if not user.is_active:
+                return Response({
+                    "message": "Please verify your email before logging in."
+                }, status=status.HTTP_403_FORBIDDEN)
+
             refresh = RefreshToken.for_user(user)
 
             return Response({
@@ -54,7 +101,10 @@ class LoginView(APIView):
                 }
             }, status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class ProfileView(APIView):
@@ -149,3 +199,122 @@ class DocumentListView(APIView):
         ]
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class VerifyEmailView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        token = request.data.get("token")
+
+        if not token:
+            return Response(
+                {"error": "Verification token is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            payload = verify_verification_token(token)
+        except signing.SignatureExpired:
+            return Response(
+                {"error": "Verification link has expired. Please request a new one."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except signing.BadSignature:
+            return Response(
+                {"error": "Invalid verification token."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user_id = payload.get("user_id")
+        email = payload.get("email")
+
+        if not user_id or not email:
+            return Response(
+                {"error": "Invalid verification token."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.filter(
+            pk=user_id,
+            email__iexact=email,
+        ).first()
+
+        if not user:
+            return Response(
+                {"error": "User not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        verification = EmailVerification.objects.filter(
+            user=user
+        ).first()
+
+        if not verification:
+            return Response(
+                {"error": "Verification record not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if verification.is_verified:
+            return Response(
+                {"message": "Email already verified."},
+                status=status.HTTP_200_OK,
+            )
+
+        verification.is_verified = True
+        verification.save(update_fields=["is_verified"])
+
+        user.is_active = True
+        user.save(update_fields=["is_active"])
+
+        return Response(
+            {"message": "Email verified successfully."},
+            status=status.HTTP_200_OK,
+        )
+
+
+from .models import User
+class ResendVerificationEmailView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        email = request.data.get("email", "").strip()
+
+        if email:
+            user = User.objects.filter(
+                email__iexact=email
+            ).first()
+
+            if user:
+                verification = (
+                    EmailVerification.objects.filter(
+                        user=user
+                    ).first()
+                )
+
+                if (
+                    verification
+                    and not verification.is_verified
+                ):
+                    token = generate_verification_token(user)
+
+                    transaction.on_commit(
+                        lambda: send_verification_email.delay(
+                            user.pk,
+                            token
+                        )
+                    )
+
+        return Response(
+            {
+                "message": (
+                    "If an unverified account exists for "
+                    "that email, a verification email "
+                    "will be sent."
+                )
+            },
+            status=status.HTTP_200_OK
+        )

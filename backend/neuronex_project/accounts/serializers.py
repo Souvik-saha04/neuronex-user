@@ -21,19 +21,47 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         return User.objects.create_user(**validated_data) 
 
+
+from rest_framework import serializers
+from accounts.models import User, EmailVerification
+
+
 class LoginSerializer(serializers.Serializer):
-    email=serializers.EmailField()
-    password=serializers.CharField(write_only=True)
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
     def validate(self, data):
-        email=data.get("email")
-        password=data.get("password")
+        email = data.get("email")
+        password = data.get("password")
+
         try:
-            user=User.objects.get(email=email)
+            user = User.objects.get(email__iexact=email)
         except User.DoesNotExist:
-            raise serializers.ValidationError("invalid email")
+            raise serializers.ValidationError(
+                {"email": "Invalid email or password."}
+            )
+
         if not user.check_password(password):
-            raise serializers.ValidationError("incorrect password")
+            raise serializers.ValidationError(
+                {"email": "Invalid email or password."}
+            )
+
         if not user.is_active:
-            raise serializers.ValidationError("user is not active")
-        data["user"]=user
+            raise serializers.ValidationError(
+                {"email": "User account is inactive."}
+            )
+
+        verification = EmailVerification.objects.filter(
+            user=user
+        ).first()
+
+        if not verification or not verification.is_verified:
+            raise serializers.ValidationError({
+                "email": (
+                    "Please verify your email before logging in. "
+                    "Check your inbox for the verification link."
+                )
+            })
+
+        data["user"] = user
         return data
