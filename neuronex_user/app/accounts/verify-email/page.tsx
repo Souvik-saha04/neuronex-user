@@ -1,12 +1,12 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
@@ -14,31 +14,28 @@ export default function VerifyEmailPage() {
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
 
+  // Prevents the double request caused by React Strict Mode in dev
+  const hasRun = useRef(false);
+
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     if (!token) {
       setMessage("Verification token is missing.");
       setLoading(false);
       return;
     }
 
-    let cancelled = false;
-
     async function verifyEmail() {
       try {
-        const response = await fetch(
-          `${API_URL}/accounts/verify-email/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token }),
-          }
-        );
+        const response = await fetch(`${API_URL}/accounts/verify-email/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
 
-        const data = await response.json();
-
-        if (cancelled) return;
+        const data = await response.json().catch(() => ({}));
 
         if (response.ok) {
           setSuccess(true);
@@ -49,41 +46,47 @@ export default function VerifyEmailPage() {
           );
         }
       } catch {
-        if (!cancelled) {
-          setMessage("Could not connect to the server. Please try again.");
-        }
+        setMessage("Could not connect to the server. Please try again.");
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     }
 
     verifyEmail();
-
-    return () => {
-      cancelled = true;
-    };
   }, [token]);
 
   return (
     <main className="flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-md rounded-xl border p-8 text-center">
-        <h1 className="mb-4 text-2xl font-bold">
-          Email Verification
-        </h1>
+        <h1 className="mb-4 text-2xl font-bold">Email Verification</h1>
 
         <p role="status">{message}</p>
 
         {loading && <p className="mt-3">Please wait...</p>}
 
         {success && (
-          <a
+          <Link
             href="/"
             className="mt-6 inline-block rounded-lg bg-blue-600 px-5 py-3 text-white"
           >
             Continue to NEURONEX
-          </a>
+          </Link>
         )}
       </div>
     </main>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center p-6">
+          <p>Loading...</p>
+        </main>
+      }
+    >
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

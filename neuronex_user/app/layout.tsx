@@ -9,6 +9,7 @@ import { FaHome, FaMapPin } from "react-icons/fa";
 import { CgFileDocument } from "react-icons/cg";
 import { IoIosAlert } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
+import { MdFamilyRestroom } from "react-icons/md";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { UploadCloud } from 'lucide-react';
@@ -23,7 +24,8 @@ const navItems = [
   { href: '/user/health_records', icon: <CgFileDocument />, label: 'Health Records' },
   { href: '/user/ai_alert', icon: <IoIosAlert />, label: 'AI Health Alerts' },
   { href: '/user/nearby_help', icon: <FaMapPin />, label: 'Nearby Help' },
-  { href: '/user/upload_doc', icon: <UploadCloud />, label: 'upload doc' },
+  { href: '/user/upload_doc', icon: <UploadCloud />, label: 'Upload Doc' },
+  { href: '/user/family', icon: <MdFamilyRestroom />, label: 'Add Member' },
 ];
 
 interface User {
